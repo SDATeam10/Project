@@ -11,3 +11,5 @@ Reverse engineering of a medium-sized open source project.
 - `journals` this folder would hold each team member's journal
 - `tools` any tool, make files, bash scripts or similar which may be useful for the project would go here.
 
+
+- *Where to place research documents? i.e. internal notes and resources used to develop the final deliverable documents?* 
