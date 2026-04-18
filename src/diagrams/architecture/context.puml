@@ -1,0 +1,34 @@
+@startuml context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(client, "Client", "Provider of source rust files, could be a user calling rust_analyzer directly or, more commonly, a user working with a IDE.")
+System(system, "Rust Analizer", "Provides the users with common quality of life features such as: annotations, auto-imports, code completion, hover information and many others.")
+
+Rel(client, system, "Provides source rust files")
+Rel(system, client, "Produces structured semantic model of source files")
+
+@enduml
+
+@startuml component
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+Container(parser, "Parser", "Cargo/crate", "Produces a sequence of events")
+
+' This is possibly a Container! It is Rust syntax tree structure and parser
+Container(syntax, "Syntax", "Cargo/crate", "This module is an API boundary, is independent from the rest of Rust analyzer, knows nothing about LSP or Salsa")
+
+Container(base-db, "Base-db", "Salsa", "Defines most of the 'input' queries: facts supplied by the client to the analyzer" )
+
+' The hir container is considered an API boundry, while it's subcomponents (hir-xxx) are NOT
+Container(hir, "hir", "Cargo/crate", "Implements the compiler part of the analyzer" )
+
+
+' The ide container is considered an API boundry -> provides high-level IDE features like completion/goto definitions. It is built on top hir
+Container(ide, "ide", "Cargo/crate", )
+
+@enduml
