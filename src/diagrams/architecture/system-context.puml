@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(client, "Client", "Provider of source rust files, could be a user calling rust_analyzer directly or, more commonly, a user working with a IDE.")
+System_Ext(ide, "Integrated Development Environment", "Software designed to write and modify source code effectively")
+System(system, "Rust Analizer", "Provides the users with common quality of life features such as: annotations, auto-imports, code completion, hover information and many others.")
+
+Rel(client, ide, "Provides source rust files")
+Rel(ide, system, "Request information about the code, such as compile errors, autocomplete options, ...")
+Rel(system, ide, "Produces structured semantic model of source files")
+Rel(ide, client, "Displays source file with semantic meaning applied")
+
+@enduml
+
+

@@ -1,0 +1,44 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(client, "Client", "Provider of source rust files, could be a user calling rust_analyzer directly or, more commonly, a user working with a IDE.")
+System_Ext(ide_ext, "Integrated Development Environment", "Software designed to write and modify source code effectively")
+
+System_Boundary(sn, "Rust Analyzer System"){
+    Container(build, "Build", "xtask", "Rust analyzer's custom building pipeline" )
+    Container(parser, "Parser", "", "Transforms one flat stream of events, into another flat stream of events" )
+    Container(syntax, "Syntax", "", "Produces an interpreted syntactic tree of the given stream of events" )
+    ContainerDb(basedb, "Base-db", "Salsa", "A key value store used to implement incremental and on-demand computation" )
+    Container(hir, "Hir", "crates/hir-expand, crates/hir-def, crates/hir_ty", "Provides high-level object-oriented access to Rust code" )
+    Container(ide_int, "Ide", "crates/ide, crates/ide-db, crates/ide-assists, crates/ide-completion, crates/ide-diagnostics, crates/ide-ssr", "Provides 'ide-centric' APIs for the rust-analyzer.")
+    Container(rustanalyzer, "Rust Analyzer", "", "Implementation of the LSP for rust-analyzer.")
+    Container(project, "Project", "crates/toolchain, crates/project-model, crates/flycheck", "Provide functionalities related to the project's structure and get compiler errors for the “check on save” feature")
+    Container(macro, "Macros", "crates/mbe, crates/tt, crates/proc-macro-api, crates/proc-macro-srv, crates/proc-macro-srv-cli", "These crates implement macros as token tree -> token tree transforms. They are independent from the rest of the code.")
+    Container(cfg, "Cfg", "crates/cfg", "This crate is responsible for parsing, evaluation and general definition of cfg attributes.")
+    Container(paths, "Paths", "crates/vfs, crates/vfs-notify, crates/paths", "These crates implement a virtual file system. They provide consistent snapshots of the underlying file system and insulate messy OS paths.")
+    Container(stdx, "stdx", "crates/stdx", "This crate contains various non-rust-analyzer specific utils, which could have been in std, as well as copies of unstable std items we would like to make use of already.")
+    Container(profile, "Profiling", "crates/profile", "This crate contains utilities for CPU and memory profiling.")
+    Container(intern, "Inter?", "crates/intern", "This crate contains infrastructure for globally interning things via Arc.")
+    Container(loadcargo, "Load Cargo", "crates/load-cargo", "This crate exposes several utilities for loading projects, used by the main rust-analyzer crate and other downstream consumers.")
+    Container(dependencies, "Dependencies", "crates/rustc-dependencies", "This crate wraps the rustc_* crates rust-analyzer relies on and conditionally points them to mirrored crates-io releases such that rust-analyzer keeps building on stable.")
+    Container(span, "Span", "crates/span", "This crate exposes types and functions related to rust-analyzer’s span for macros.")
+
+}
+
+Rel(rustanalyzer, ide_int, "")
+Rel(ide_int, hir, "")
+Rel(hir, syntax, "")
+Rel(hir, basedb, "")
+Rel(syntax, parser, "")
+Rel(rustanalyzer, loadcargo, "")
+
+Rel(client, ide_ext, "Provides source rust files")
+Rel(ide_ext, rustanalyzer, "Request information about the code, such as compile errors, autocomplete options, ...")
+Rel(rustanalyzer, ide_ext, "Produces structured semantic model of source files")
+Rel(ide_ext, client, "Displays source file with semantic meaning applied")
+
+@enduml
+
+
