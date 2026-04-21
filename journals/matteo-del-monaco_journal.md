@@ -44,3 +44,8 @@
 - **11:26:58 — feat: added imgs**
     - `img/diagrams/architecture/container.png` : +0/-0
     - `img/diagrams/architecture/system-context.png` : +0/-0
+- **18:11:37 — feat: added automatic compilation for plantuml architecture diagrams**
+    - `tools/puml2img/compile-architecture.sh` : +4/-0
+- **18:12:37 — feat: expanded general architecture module, note, this is not C4 compliant yet; I am trying to understand the system before modelling it according to C4 standard**
+    - `img/diagrams/architecture/container.png` : +0/-0
+    - `src/diagrams/architecture/container.puml` : +12/-2
