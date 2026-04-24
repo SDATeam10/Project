@@ -49,3 +49,9 @@
 - **18:12:37 — feat: expanded general architecture module, note, this is not C4 compliant yet; I am trying to understand the system before modelling it according to C4 standard**
     - `img/diagrams/architecture/container.png` : +0/-0
     - `src/diagrams/architecture/container.puml` : +12/-2
+
+### 2026-04-24
+- **16:55:42 — fix: removed references**
+    - `src/diagrams/architecture/container.puml` : +0/-4
+- **16:55:51 — feat: added two new ferences**
+    - `res/architecture-useful-references.md` : +4/-0
