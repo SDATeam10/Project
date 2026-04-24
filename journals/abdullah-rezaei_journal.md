@@ -4,10 +4,10 @@
 
 ### Date: 2026-04-18
 
-### Period: 5 hours
+### Period: 8 hours
 
 ### Cooperators
-* [Saeid Albouyeh]
+* Saeid Albouyeh
 
 ### Objectives
 * **Objective 1:** Extract basic code statistics (number of files, lines of code) required for the Report Overview section.
