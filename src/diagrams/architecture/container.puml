@@ -48,7 +48,3 @@ Rel(ide_ext, client, "Displays source file with semantic meaning applied")
 OPEN QUESTIONS:
 - What does intern mean in this context?
 
-FURTHER REFERENCES:
-- [deepWiki?](https://deepwiki.com/rust-lang/rust-analyzer/1-overview)
-
-
