@@ -63,7 +63,7 @@ More in details:
 
 ### Report
 
-Today's work was dedicated on discovering some important control flows, apllying the knowledge took from last work to guess the interactions between the crates and then confirming it from documentation, helped by AI. Then some diagrams of these flows have been defined and uploaded into `Project/img/flowsDiagrams`
+Today's work was dedicated on discovering some important control flows, apllying the knowledge took from last work to guess the interactions between the crates and then confirming it from documentation, helped by AI. Then some diagrams of these flows have been defined and uploaded into `Project/img/diagrams/flowsDiagrams`
 
 More in details:
 
