@@ -42,9 +42,21 @@ As mentioned in the introduction, Rust Analyzer's core workflow consists of a us
 <!--
 - Container level: diagram and explanations
     * Did you find any relationship with the Clean Architecture blueprint?
+
+Salsa apparently shouldn't be considered a container, as it's not a database running as a separate process, but rather a logical component that implements incremental persistance.
 -->
 
+At the container level Rust Analyzer's layered architecture is not yet visible, though some of the most important entities start to emerge.
+
+The external IDE interacts directly with the language server exposed by Rust Analyzer's single deployed container.
+
 ![container-diagram](../../img/diagrams/architecture/container.png) 
+
+Though omitted in the diagram, as it doesn't concern the runtime system, at development/installation time, another container becomes relevant:
+`xtask` is Rust Analyzer's custom build tool; it is able to produce different types of Rust Analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
+
+As Rust Analyzer is a single deployable unit, the clean architecture blueprint is not yet clearly visible at this level of abstraction.
+Rust Analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become evident in the next section.
 
 ***
 
