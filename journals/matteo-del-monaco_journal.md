@@ -55,3 +55,16 @@
     - `src/diagrams/architecture/container.puml` : +0/-4
 - **16:55:51 — feat: added two new ferences**
     - `res/architecture-useful-references.md` : +4/-0
+
+### 2026-04-30
+- **08:49:55 — feat: created component and container stub diagrams**
+    - `img/diagrams/architecture/component.png` : +0/-0
+    - `img/diagrams/architecture/container.png` : +0/-0
+    - `src/diagrams/architecture/component.puml` : +47/-0
+    - `src/diagrams/architecture/container.puml` : +7/-35
+- **10:01:39 — feat: added images, short introduction and system context first draft**
+    - `src/deliverables/Architecture.md` : +23/-0
+- **10:37:44 — feat: container section draft**
+    - `src/deliverables/Architecture.md` : +12/-0
+- **10:40:24 — feat: removed xtask and base-db**
+    - `src/diagrams/architecture/container.puml` : +0/-4
