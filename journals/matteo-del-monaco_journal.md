@@ -84,3 +84,7 @@
     - `src/deliverables/Architecture.md` : +44/-4
 - **16:38:51 — feat: component draft and VFS notes**
     - `src/deliverables/Architecture.md` : +41/-1
+- **19:11:04 — fix: 'Integration' -> 'LSP Integratino'**
+    - `src/diagrams/architecture/layered-architecture.puml` : +1/-1
+- **19:11:16 — feat: added notes on IDE crate**
+    - `src/deliverables/Architecture.md` : +19/-1
