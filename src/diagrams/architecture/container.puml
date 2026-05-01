@@ -2,6 +2,8 @@
 !pragma layout smetana
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
+left to right direction
+
 LAYOUT_WITH_LEGEND()
 
 Person(client, "Client", "Provider of source rust files, could be a user calling rust_analyzer directly or, more commonly, a user working with a IDE.")
