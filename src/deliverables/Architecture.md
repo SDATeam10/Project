@@ -86,7 +86,14 @@ Rust Analyzer's designers were clearly aware of "clean code" and "clean architec
     * Did you observe any violation of SOLID principles at level 3 ?
 -->
 
-As mentioned before, rust 
+At a high level, Rust Analyzer is structured in a loosely layered way, as shown in the figure 3.1.
+The analysis starts when the client requests some type of analysis through the LSP protocol.
+The LSP layer than forwards this request to the `IDE` layer. 
+Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
+the syntactic layer, parses the text and generates a valid CST of the provided source files.
+Then, the semantic layer takes the CST input and applies semantical meaning to it: mapping syntax nodes to logical concepts. 
+
+
 
 <figure>
     <center>
@@ -116,4 +123,37 @@ As mentioned before, rust
     * You might also use components coupling and cohesion metrics to support your reasoning
 -->
 
+
+***
+# Architectural notes
+These are some of my personal notes on how some components work, taken mostly from this [palylist](https://www.youtube.com/playlist?list=PLhb66M_x9UmrqXhQuIpWC5VgTdrGxMx3y):
+
+## VFS
+Rust Analyzer uses a virtual file system to abstract away how files are acutally stored in the file system.
+This is done for several reasons:
+1. Rust Analyzer, to avoid occupying too much memory, has to be able to create derived data, forget about it and then recompute it again. If Rust Analyzer simply relied on multiple reads of the same file, there would likely be inconsistencies across multiple reads.
+2. Rust Analyzer wants to be *platform-agnostic*, it should be able to work regardless of the underlaying file system used by the OS.
+3. On a similar vain, Rust Analyzer would also like to be able to support Multi-file system works (for example, projects written on a Windows machine, but analysed on a separate linux server).
+
+For Rust Analyzer is much simpler to create an internal representation of files as text snapshots indexed by `FileId`, removing direct dependence on OS paths and file system semantics.
+
+To achieve this, files are stored identified not by their paths, but through an id, called `FileId`. 
+
+> **Architecture Invariant** 
+> Using IDs to identify files has another important consequence: it makes it very hard to go from a `FileId` to an actual file on the OS file system.
+> This makes it easier to avoid mistakes where a developer accidentally reads a file directly and causes problems.
+> This way, access to files happens strictly through the *virtual file system*.  
+>
+> This trend is visible throughout this whole component, file system specific information is systematically erased and only the virtual representation is available to the rest of the project.
+
+> **Architecture Invariant**
+> VFS doesn't perform any IO directly and doesn't load or read files, its job is only to record state. The VFS is only populated via the method `set_file_contents`, which intern updates the `changes` array.
+>
+> This is similar to the architectural pattern called _event sourcing_ used in microservices: each event (deleted, created, modified) is recorded and then used to rebuild from scratch the actual content of the file.
+>
+> It's instead `loader.rs` job to perform the actual read of the file. It is both able to read files and detect when they have been changed (and emit the associated events). The 'watching' functionality is a non-trivial problem to solve, as most raw OS APIs don't offer a reliable mechanism to detect changes. The crate `vfs_notify` is an implementation of `loader::Handle` and implements the file watching function.
+>
+> The file watching bits here are untested and quite probably buggy. For this reason, by default Rust Analyzer doesn't watch files and relies on editor’s file watching capabilities instead.
+
+`FileSet` is a special module that allows VFS to be split into "chunks" that roughly correspond to single crate. This is quite useful because it allows to prevent the propagation of changes across the whole VFS, thus help limit recomputation by grouping related files. 
 
