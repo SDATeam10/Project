@@ -68,3 +68,19 @@
     - `src/deliverables/Architecture.md` : +12/-0
 - **10:40:24 — feat: removed xtask and base-db**
     - `src/diagrams/architecture/container.puml` : +0/-4
+
+### 2026-05-01
+- **11:01:17 — feat: diagram that shows the underlying loosely layered architecture of rust analyzer**
+    - `img/diagrams/architecture/layered-architecture.png` : +0/-0
+    - `src/diagrams/architecture/layered-architecture.puml` : +24/-0
+- **11:01:51 — chore: re-rendered image to allign with latest changes**
+    - `img/diagrams/architecture/container.png` : +0/-0
+- **11:11:43 — style: changed diagram's direction from 'top to bottom' to 'left to right'**
+    - `img/diagrams/architecture/container.png` : +0/-0
+    - `img/diagrams/architecture/system-context.png` : +0/-0
+    - `src/diagrams/architecture/container.puml` : +2/-0
+    - `src/diagrams/architecture/system-context.puml` : +1/-0
+- **11:12:04 — feat: wrapped images in figure html to improve layout**
+    - `src/deliverables/Architecture.md` : +44/-4
+- **16:38:51 — feat: component draft and VFS notes**
+    - `src/deliverables/Architecture.md` : +41/-1
