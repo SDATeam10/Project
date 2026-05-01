@@ -88,3 +88,5 @@
     - `src/diagrams/architecture/layered-architecture.puml` : +1/-1
 - **19:11:16 — feat: added notes on IDE crate**
     - `src/deliverables/Architecture.md` : +19/-1
+- **19:16:21 — fix: trying to see if align="center" is actually supported by github markdown renderer**
+    - `src/deliverables/Architecture.md` : +2/-6
