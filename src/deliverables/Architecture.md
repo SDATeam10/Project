@@ -30,7 +30,17 @@ These different use cases, however, are visible in Rust Analyzer's loosely layer
 
 As mentioned in the introduction, Rust Analyzer's core workflow consists of a user asking its IDE for some language tooling feature. The IDE then forwards this request to Rust Analyzer using the LSP protocol.
 
-![context-diagram](../../img/diagrams/architecture/system-context.png) 
+
+<figure>
+    <center>
+        <img
+        src="../../img/diagrams/architecture/system-context.png"
+        alt="system-context"
+        />
+        <figcaption><em>Figure 1.1: System context diagram</em></figcaption>
+    </center>
+</figure>
+
 
 > "The Language Server Protocol (LSP) is an open, JSON-RPC-based protocol for use between source-code editors or integrated development environments (IDEs) and servers that provide 'language intelligence tools'. The goal of the protocol is to allow programming language support to be implemented and distributed independently of any given editor or IDE."
 > 
@@ -50,7 +60,17 @@ At the container level Rust Analyzer's layered architecture is not yet visible, 
 
 The external IDE interacts directly with the language server exposed by Rust Analyzer's single deployed container.
 
-![container-diagram](../../img/diagrams/architecture/container.png) 
+<figure>
+    <center>
+        <img
+        src="../../img/diagrams/architecture/container.png"
+        alt="container"
+        />
+        <figcaption><em>Figure 2.1: Container diagram</em></figcaption>
+    </center>
+</figure>
+
+
 
 Though omitted in the diagram, as it doesn't concern the runtime system, at development/installation time, another container becomes relevant:
 `xtask` is Rust Analyzer's custom build tool; it is able to produce different types of Rust Analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
@@ -65,8 +85,28 @@ Rust Analyzer's designers were clearly aware of "clean code" and "clean architec
 - Component level: diagrams and explanations
     * Did you observe any violation of SOLID principles at level 3 ?
 -->
- 
-![component-diagram](../../img/diagrams/architecture/component.png) 
+
+As mentioned before, rust 
+
+<figure>
+    <center>
+        <img
+        src="../../img/diagrams/architecture/layered-architecture.png"
+        alt="layered-architecture"
+        />
+        <figcaption><em>Figure 3.1: Rust's Analizer layered architecture</em></figcaption>
+    </center>
+</figure>
+
+<figure>
+    <center>
+        <img
+        src="../../img/diagrams/architecture/component.png"
+        alt="component"
+        />
+        <figcaption><em>Figure 3.2: Component diagram</em></figcaption>
+    </center>
+</figure>
 
 ***
 
