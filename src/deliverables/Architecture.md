@@ -95,24 +95,20 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
 
 
 
-<figure>
-    <center>
+<figure align="center">
         <img
         src="../../img/diagrams/architecture/layered-architecture.png"
         alt="layered-architecture"
         />
         <figcaption><em>Figure 3.1: Rust's Analizer layered architecture</em></figcaption>
-    </center>
 </figure>
 
-<figure>
-    <center>
+<figure align="center">
         <img
         src="../../img/diagrams/architecture/component.png"
         alt="component"
         />
         <figcaption><em>Figure 3.2: Component diagram</em></figcaption>
-    </center>
 </figure>
 
 ***
