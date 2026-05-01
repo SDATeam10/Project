@@ -1,0 +1,24 @@
+@startuml
+<style>
+element {MinimumWidth 200}
+</style>
+skinparam defaultTextAlignment center
+skinparam linetype ortho
+
+
+rectangle "**Integration**" as lsp
+rectangle "**IDE**" as ide
+rectangle "**Semantic Analysis**" as sem
+rectangle "**Syntactic Analysis**" as syn
+rectangle "**Infrastructure**" as inf
+
+
+lsp --> ide
+ide --> sem
+sem --> syn
+
+lsp -d-> inf
+ide -d-> inf
+sem -r-> inf
+
+@enduml
