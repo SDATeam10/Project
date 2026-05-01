@@ -128,7 +128,7 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
 # Architectural notes
 These are some of my personal notes on how some components work, taken mostly from this [palylist](https://www.youtube.com/playlist?list=PLhb66M_x9UmrqXhQuIpWC5VgTdrGxMx3y):
 
-## VFS
+## VFS + Paths
 Rust Analyzer uses a virtual file system to abstract away how files are acutally stored in the file system.
 This is done for several reasons:
 1. Rust Analyzer, to avoid occupying too much memory, has to be able to create derived data, forget about it and then recompute it again. If Rust Analyzer simply relied on multiple reads of the same file, there would likely be inconsistencies across multiple reads.
@@ -156,4 +156,22 @@ To achieve this, files are stored identified not by their paths, but through an 
 > The file watching bits here are untested and quite probably buggy. For this reason, by default Rust Analyzer doesn't watch files and relies on editor’s file watching capabilities instead.
 
 `FileSet` is a special module that allows VFS to be split into "chunks" that roughly correspond to single crate. This is quite useful because it allows to prevent the propagation of changes across the whole VFS, thus help limit recomputation by grouping related files. 
+
+## IDE crate
+Main facade for the language server. It provides a stable, query-based API over the semantic layer. It also converts reach semantic data structures used internally into simpler data structures which can be more easily serialized. 
+
+> **Architecture Invariant**
+> This crate acts as an **API boundary** between the IDE functions and the underlaying semantic representation of rust code.  
+
+This crate internally is divided into two main subcomponents.
+
+The `AnalysisHost` component is an abstraction used to store the current state of the analysis. It holds the mutable salsa database. Its state changes only through the invocation of a method called `apply_change`.
+
+In this context, a `Change` represents a batch of updates to the database inputs, including file contents, source roots, and the crate graph. 
+
+`AnalysisHost` produces `Analysis` values, which are immutable snapshots of the database at a specific point in time. These snapshots allow concurrent read access to the analysis.
+
+> **Architecture Invariant** 
+> `Analysis` provides a consistent view of the world at a moment in time. Multiple `Analysis` instances can coexist and be used concurrently. When `AnalysisHost::apply_change` is invoked, the database is updated and previously in-flight computations may be cancelled, ensuring that outdated results do not propagate.
+
 
