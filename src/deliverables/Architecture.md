@@ -125,15 +125,15 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
 These are some of my personal notes on how some components work, taken mostly from this [palylist](https://www.youtube.com/playlist?list=PLhb66M_x9UmrqXhQuIpWC5VgTdrGxMx3y):
 
 ## VFS + Paths
-Rust Analyzer uses a virtual file system to abstract away how files are acutally stored in the file system.
+Rust Analyzer uses a virtual file system to abstract away how files are actually stored in the file system.
 This is done for several reasons:
-1. Rust Analyzer, to avoid occupying too much memory, has to be able to create derived data, forget about it and then recompute it again. If Rust Analyzer simply relied on multiple reads of the same file, there would likely be inconsistencies across multiple reads.
-2. Rust Analyzer wants to be *platform-agnostic*, it should be able to work regardless of the underlaying file system used by the OS.
-3. On a similar vain, Rust Analyzer would also like to be able to support Multi-file system works (for example, projects written on a Windows machine, but analysed on a separate linux server).
+1. Rust Analyzer, to avoid occupying too much memory, has to be able to create derived data, forget about it and then recompute it again. Rust Analyzer is therefore mostly concerned with storing stable, versioned snapshots of file contents, so that the analysis can be incremental and deterministic. 
+2. Rust Analyzer wants to be *platform-agnostic*, it should be able to work regardless of the underlying file system used by the OS. The VFS helps decouple the internal representation of files from how the OS keeps track of them. Only specific submodules (`loader`) know actual OS paths.
+3. On a similar vein, Rust Analyzer would also like to be able to support Multi-file system works (for example, projects written on a Windows machine, but analysed on a separate Linux server).
 
 For Rust Analyzer is much simpler to create an internal representation of files as text snapshots indexed by `FileId`, removing direct dependence on OS paths and file system semantics.
 
-To achieve this, files are stored identified not by their paths, but through an id, called `FileId`. 
+To achieve this, files are stored identified not by their paths, but through an ID, called `FileId`. 
 
 > **Architecture Invariant** 
 > Using IDs to identify files has another important consequence: it makes it very hard to go from a `FileId` to an actual file on the OS file system.
@@ -143,18 +143,16 @@ To achieve this, files are stored identified not by their paths, but through an 
 > This trend is visible throughout this whole component, file system specific information is systematically erased and only the virtual representation is available to the rest of the project.
 
 > **Architecture Invariant**
-> VFS doesn't perform any IO directly and doesn't load or read files, its job is only to record state. The VFS is only populated via the method `set_file_contents`, which intern updates the `changes` array.
+> VFS doesn't perform any IO directly and doesn't load or read files, its job is only to record state. The VFS is updated through events such as `set_file_contents`, which in turn updates the `changes` array.
 >
-> This is similar to the architectural pattern called _event sourcing_ used in microservices: each event (deleted, created, modified) is recorded and then used to rebuild from scratch the actual content of the file.
->
-> It's instead `loader.rs` job to perform the actual read of the file. It is both able to read files and detect when they have been changed (and emit the associated events). The 'watching' functionality is a non-trivial problem to solve, as most raw OS APIs don't offer a reliable mechanism to detect changes. The crate `vfs_notify` is an implementation of `loader::Handle` and implements the file watching function.
+> It's instead `loader.rs` job to perform the actual read of the file. It is both able to read files and detect when they have been changed (and emit the associated events). The 'watching' functionality is a non-trivial issue to solve, as most raw OS APIs don't offer a reliable mechanism to detect changes. The crate `vfs_notify` is an implementation of `loader::Handle` and implements the file watching function.
 >
 > The file watching bits here are untested and quite probably buggy. For this reason, by default Rust Analyzer doesn't watch files and relies on editor’s file watching capabilities instead.
 
 `FileSet` is a special module that allows VFS to be split into "chunks" that roughly correspond to single crate. This is quite useful because it allows to prevent the propagation of changes across the whole VFS, thus help limit recomputation by grouping related files. 
 
 ## IDE crate
-Main facade for the language server. It provides a stable, query-based API over the semantic layer. It also converts reach semantic data structures used internally into simpler data structures which can be more easily serialized. 
+Main facade for the language server. It provides a stable, query-based API over the semantic layer. It also converts rich semantic data structures used internally into simpler data structures which can be more easily serialized as well as implementing IDE features such as completion, hover, ….
 
 > **Architecture Invariant**
 > This crate acts as an **API boundary** between the IDE functions and the underlaying semantic representation of rust code.  
@@ -169,5 +167,37 @@ In this context, a `Change` represents a batch of updates to the database inputs
 
 > **Architecture Invariant** 
 > `Analysis` provides a consistent view of the world at a moment in time. Multiple `Analysis` instances can coexist and be used concurrently. When `AnalysisHost::apply_change` is invoked, the database is updated and previously in-flight computations may be cancelled, ensuring that outdated results do not propagate.
+
+## Rust Analyzer → main loop
+The main function initiates the LSP server and creates a connection between the IDE and Rust Analyzer. Subsequently, it enters the main loop where it starts processing events.
+Internally, Rust Analyzer uses *channels* to route messages between components.
+
+This crate also defines one of the largest structs in the project: `GlobalState`. 
+This struct is responsible for keeping track of:
+- `analysis_host`, which holds the current logical analysis of the code.
+- `req_queue` tracks in-flight LSP requests and responses, mapping request IDs to their associated state and enabling Rust Analyzer to correctly match responses to requests.
+- `task_pool`, is essentially a thread pool responsible for managing the async processes that are going on in the background and reporting back their completion to the main loop.
+- `sender`, used to send outgoing LSP messages to the client, as the LSP protocol is *symmetric* (i.e. both the server and the client can send request/response messages). 
+- `loader`, a reference to the `vfs` loader, used to implement file watching.
+- `mem_docs` stores in-memory versions of files that have been edited but not yet saved. These override the corresponding files in the VFS, ensuring that analysis always reflects what the user currently sees in the editor rather than what is on disk.
+- `vfs` is used to track the virtual file system state. 
+
+
+Rust Analyzer's main is essentially an event loop.
+- `next_event` retrieves an event to process from one of 4 possible queues: the LSP message queue, the task pool (i.e. completed background task), the VFS and finally from cargo check.
+- `handle_event` mutates the global state and processes the retrieved event.
+
+> **Architecture Invariant** 
+> Interestingly, `handle_event`, when dealing with `Event::Vfs` initiates a loop. When a task ends it immediately tries to drain additional `Event::Vfs` events from the event queue, thus allowing to coalesce many VFS events into a single loop turn.
+>
+> Coalescing `Event::Vfs` enables to create a single `AnalysisHost::Change` and apply changes to the analysis host in bulk.
+
+
+> **Architecture Invariant** 
+> Rust Analyzer informally uses the idea of "subscriptions" to limit work such as diagnostics. Since LSP does not provide a notion of visible files, it approximates this by using open (in-memory) documents (`mem_docs`) and prioritizing diagnostics for those files.
+
+
+
+
 
 
