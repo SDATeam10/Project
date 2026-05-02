@@ -94,3 +94,7 @@
 ### 2026-05-02
 - **11:35:09 — feat: added main loop section**
     - `src/deliverables/Architecture.md` : +40/-10
+- **17:49:03 — chore: added transcript file to gitignore**
+    - `.gitignore` : +2/-0
+- **17:49:11 — feat: added crate graph section**
+    - `src/deliverables/Architecture.md` : +37/-0
