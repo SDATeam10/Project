@@ -121,6 +121,7 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
 
 
 ***
+
 # Architectural notes
 These are some of my personal notes on how some components work, taken mostly from this [palylist](https://www.youtube.com/playlist?list=PLhb66M_x9UmrqXhQuIpWC5VgTdrGxMx3y):
 
@@ -195,6 +196,42 @@ Rust Analyzer's main is essentially an event loop.
 
 > **Architecture Invariant** 
 > Rust Analyzer informally uses the idea of "subscriptions" to limit work such as diagnostics. Since LSP does not provide a notion of visible files, it approximates this by using open (in-memory) documents (`mem_docs`) and prioritizing diagnostics for those files.
+
+---
+
+## CrateGraph
+`CrateGraph` was one of the earliest design decisions which differentiates Rust Analyzer from a typical compiler. 
+`CrateGraph` addresses a key problem of traditional compilers. Traditional compilers work on what is known as a single *compilation unit* at a time. Basically, the compilation of each crate is independent and can happen in parallel. Most importantly, a compiler needs only to analyse *downstream dependencies* and can rely on previously built data.
+In an IDE environment, like the one Rust Analyzer aims to support, support for cross-crate queries is needed (e.g., “find all usages of this symbol across the workspace”)
+
+For instance, let's assume the following situation:
+
+```rust
+// crate_a
+pub struct S;
+
+// crate_b
+use crate_a::S;
+
+fn f(x: S) {}
+```
+In order to provide a usage list of `S`, Rust Analyzer must search across all crates that depend on `crate_a`, and not just within `crate_a`.
+
+> **Architecture Invariant** 
+> For this important reason, Rust Analyzer doesn't think in terms of *current working directory* or *current crate*, but instead as a **set of crates** and a set of **source roots**.
+
+The `CrateGraph`, as the name implies is a *graph*: each node is a *crate* and each node holds a vector (`Dependency`) with all other crate dependencies (stored as `crate_id` and `name`).
+
+> **Architecture Invariant** 
+> Due to how *Cargo*'s build system works, crates, while possessing stable identifiers, don't actually have a globally unique name. The actual crate's name, rather, is assigned only to the edge connecting two dependent rust crates. Practically, this means that the same crate may be referred to by different names depending on the dependency context.
+>
+> This prevents having a global namespace and the associated naming conflicts. It also allows different crates to include different versions of the same crate.
+
+> **Architecture Invariant** 
+> `CrateGraph` is *guaranteed* to be acyclic. A depth first search is used during the construction of `CrateGraph` to detect cycles and if found, the creation of `CrateGraph` results in an error.
+
+> **Architecture Invariant** 
+> The abstraction provided by `CrateGraph` is a deliberate choice in order to decouple Rust Analyzer from the specific build tooling used (mainly cargo). For this reason `CrateGraph` provides its own definition for some concepts present in cargo. Most importantly, some aspects are simplified. For example, "features", a cargo concept, are not present directly in `CrateGraph`, but are lowered into `cfg` style representation.
 
 
 
