@@ -90,3 +90,7 @@
     - `src/deliverables/Architecture.md` : +19/-1
 - **19:16:21 — fix: trying to see if align="center" is actually supported by github markdown renderer**
     - `src/deliverables/Architecture.md` : +2/-6
+
+### 2026-05-02
+- **11:35:09 — feat: added main loop section**
+    - `src/deliverables/Architecture.md` : +40/-10
