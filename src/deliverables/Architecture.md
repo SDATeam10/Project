@@ -13,11 +13,22 @@
 -->
 
 ## Introduction
-Rust Analyzer can be though of as a collection of libraries working together to provide a structured syntactic and semantic analysis of rust source code.
+Rust Analyzer can be thought of as a collection of libraries working together to provide a structured syntactic and semantic analysis of rust source code.
 
 As such, Rust Analyzer can be used in many ways by many users.
 For instance, one project may wish to import the crate `syntax` to obtain both an abstract and concrete syntax tree (AST and CST respectively) of some piece of rust code.
 While another project may use the crate `hir` to derive semantic meaning from a valid AST generated through the `syntax` crate. Yet another project may wish to interact directly with Rust Analyzer through the LSP protocol to obtain IDE level features.
+
+<!--
+Note from Marco Oliviero:
+I'm not sure about this part, because as we discovered recently, the majority of the crates are not intended for external use.
+Cfr:
+    Published Library Crates: Three crates in lib/ are published to crates.io as independent libraries
+
+    Internal Crates: All crates in crates/ have version 0.0.0 and are not intended for external use. They form rust-analyzer's internal architecture and can evolve freely without backward compatibility constraints
+
+    link: https://deepwiki.com/rust-lang/rust-analyzer/2.1-crate-structure-and-dependencies
+-->
 
 In this analysis we focused our attention on what is probably the most common use case for Rust Analyzer: a user interacting with Rust Analyzer through an IDE to obtain language tooling features (such as code completion, type checking, error checking, goto-definitions, … ).
 
@@ -90,7 +101,7 @@ At a high level, Rust Analyzer is structured in a loosely layered way, as shown 
 The analysis starts when the client requests some type of analysis through the LSP protocol.
 The LSP layer than forwards this request to the `IDE` layer. 
 Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
-the syntactic layer, parses the text and generates a valid CST of the provided source files.
+the syntactic layer parses the text and generates a valid CST of the provided source files.
 Then, the semantic layer takes the CST input and applies semantical meaning to it: mapping syntax nodes to logical concepts. 
 
 
