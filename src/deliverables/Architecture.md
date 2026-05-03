@@ -236,6 +236,51 @@ The `CrateGraph`, as the name implies is a *graph*: each node is a *crate* and e
 ---
 
 ## Base Database Crate
+This crate defines an incremental in-memory database for Rust Analyzer. Most importantly it defines important types, such as `CrateGraph`, `SourceRoot`, inputs to change the state of the world and a set of queries for reading the current state.
+
+Recall that:
+- `CrateGraph` is a graph the represents crates and their dependencies amongst each other.
+- `SourceRoot` groups files into logical sets (roughly matching with crates).
+
+> **Architecture Invariant** 
+> Inputs modifications are encapsulated in the type `Change`. This struct represents a valid state of the world and can be used to describe the delta between two valid states. 
+> It tracks:
+> - A list of `SourceRoot` (this only happens when adding/removing files).
+> - The list of file changed (with their contents).
+> - A `CrateGraph`.
+>
+> Each field in `Change` overrides the corresponding values in the database through the `apply`.
+
+This crate is the glue that keeps Rust Analyzer working well; it offers an interface to store Rust Analyzer specific concepts in a procedural incremental database implemented using `salsa` crate.
+
+What makes salsa grate in this use case is that it allows to create essentially to discover and track the dependencies between queries and recompute them incrementally on demand when inputs change.
+
+In Rust Analyzer queries are defined as trait methods with Salsa macros. Some are marked as *inputs* while others are *derived queries*.
+
+> **Architecture Invariant** 
+> There are actually two separate databases implemented as `trait`s: `SourceDatabase` (compiler specific needs) and `SourceDatabaseExt` (IDE specific needs).
+> This is a strict design choice to prevent the compiler from seeing IDE-specific data.
+
+> **Architecture Invariant** 
+> A `Change` is a structure that can fully describe a valid state of Rust Analyzer.
+> This property becomes quite useful when defining *fixtures* for testing and debugging purposes: the developer can define a valid state through a fixture (as string) and have it converted to a `Change` to initialize Rust Analyzer in a known and reproducible state.
+
+
+As Rust Analyzer works with multiple crates at the same times, and has no concept of a "current crate", it needs to determine which crates are relevant for a given file.
+This is handled via queries such as `relevant_crates`, which approximate the set of crates a file may belong to based on its source root.
+This is necessary because some files may not be part of the `CrateGraph` yet, but still need to be placed inside a valid context to provide useful information.
+
+> **Architecture Invariant** 
+> Salsa by default keeps a global version of the database which it increments every time an input changes. This is used to determine whether the cached value is still valid or not.
+>
+> This is effective, but quite coarse as some inputs are sometimes marked as stale even though nothing of relevance actually changed.
+>
+> For this reason, Rust Analyzer introduces `Durability::HIGH` and `Durability::LOW` inputs.
+>
+> Low durability inputs (e.g., user code) only invalidate queries that depend on low durability data, while high durability inputs (e.g., standard library or dependencies) invalidate all queries.
+>
+> This allows Salsa to avoid revalidating large portions of the query graph (such as dependencies) when only frequently changing inputs are modified.
+
 
 
 
