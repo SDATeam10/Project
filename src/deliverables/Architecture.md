@@ -233,6 +233,11 @@ The `CrateGraph`, as the name implies is a *graph*: each node is a *crate* and e
 > **Architecture Invariant** 
 > The abstraction provided by `CrateGraph` is a deliberate choice in order to decouple Rust Analyzer from the specific build tooling used (mainly cargo). For this reason `CrateGraph` provides its own definition for some concepts present in cargo. Most importantly, some aspects are simplified. For example, "features", a cargo concept, are not present directly in `CrateGraph`, but are lowered into `cfg` style representation.
 
+---
+
+## Base Database Crate
+
+
 
 
 
