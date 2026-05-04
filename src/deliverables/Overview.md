@@ -1,9 +1,31 @@
-### High-Level Statistics
+### Basic Code Statistics
+The analysis was performed using `scc` tool. It is a tool for counting the lines of code, blank lines, comment lines, and physical lines of source code in many programming languages.
+
+| Language    | Files | Lines   | Blanks | Comments | Code    |
+|------------|------:|--------:|-------:|---------:|--------:|
+| Rust       | 1,452 | 561,484 | 37,153 | 31,456   | 492,875 |
+| Plain Text | 93    | 5,724   | 0      | 0        | 5,724   |
+| TOML       | 55    | 2,061   | 334    | 95       | 1,632   |
+| Markdown   | 46    | 8,426   | 2,580  | 0        | 5,846   |
+| HTML       | 32    | 2,469   | 231    | 0        | 2,238   |
+| TypeScript | 27    | 7,301   | 795    | 383      | 6,123   |
+| JSON       | 17    | 23,908  | 6      | 0        | 23,902  |
+| YAML       | 13    | 1,123   | 175    | 63       | 885     |
+| License    | 7     | 877     | 133    | 0        | 744     |
+| SVG        | 2     | 230     | 2      | 2        | 226     |
+| AsciiDoc   | 1     | 90      | 13     | 0        | 77      |
+| Dockerfile | 1     | 8       | 3      | 0        | 5       |
+| JavaScript | 1     | 144     | 15     | 9        | 120     |
+| Python     | 1     | 145     | 27     | 29       | 89      |
+| Shell      | 1     | 53      | 6      | 27       | 20      |
+| **Total**  | 1,749 | 614,043 | 41,473 | 32,064   | 540,506 |
+
+### High Level Code Statistics
 * **Total Packages:** 48 (Based on project structures using shell script `find . -name "Cargo.toml" | wc -l`)
 * **Total Modules:** 3249 (Based on search among packages using shell script `grep -rnE "^[[:space:]]*(pub(\([^)]+\))?[[:space:]]+)?mod[[:space:]]+[a-zA-Z0-9_]+" crates/`)
 * **Total Authors:** 800+ (Based on repository logs using code-maat `java -jar ~/Apps/code-maat/code-maat-1.0.4-standalone.jar -l logfile.txt -c git2 -a authors`)
 
-### Top 10 Contributors
+#### Top 10 Contributors
 1. Aleksey Kladov (matklad)
 2. Laurențiu Nicola (lnicola)
 3. Lukas Wirth (Veykril)
@@ -15,11 +37,7 @@
 9. Kirill Bulatov (SomeoneToIgnore)
 10. Chayim Friedman (ChayimFriedman2)
 
-
----
-
-### Packages List
-
+#### Packages List
 | No. | Package Name |
 |---|---|
 | 1 | `(workspace root)` |

@@ -34,3 +34,22 @@ Integrating this tool presented technical challenges. First, I had to resolve a 
 This technical requirement actually proved beneficial. By being forced to focus on specific, foundational crates(`rust-analyzer`, `hir`, `syntax`, `ide`), I avoided generating an illegible, massive dependency web. Generating individual `.dot` graphs for these core crates allowed me to bypass visual clutter entirely and parse the data programmatically using shell scripts to identify exactly which files act as central orchestrators and which operate as standalone utilities.
 
 ***
+
+### Date: 2026-05-04
+
+### Period: 1 hour
+
+### Cooperators
+* Saeid Albouyeh
+
+### Objectives
+* **Objective 1:** Gathering information using tools identified through recent research, and writing the overview `Basic Code Statistics` section.
+
+### Activities & Effort
+* [x] Extracted baseline repository statistics (#files, #lines of code) utilizing the `scc` tool.
+
+### Report
+
+The focus was on completing the Basic Code Statistics overview by validating metrics such as Languages, Files, Lines, Blanks, Comments, and Code, and applying them to the entire project.
+
+***
