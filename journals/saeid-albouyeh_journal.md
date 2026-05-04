@@ -4,7 +4,7 @@
 
 ### Date: 2026-04-18
 
-### Period: 8
+### Period: 8 hours
 
 ### Cooperators
 * Abdullah Rezaei
@@ -25,5 +25,28 @@
 
 ### Report
 Work was organized by splitting responsibilities among group members to focus on design and architecture. Project documentation and the rust-analyzer structure were studied, with a focus on the organization of crates and the Language Server Protocol. The essentials of the Rust language were examined, specifically how it eschews traditional classes, interfaces, and inheritance in favor of structs and traits to achieve composition. For the required metrics, various analysis tools were evaluated; cloc and scc were checked, with scc ultimately being chosen for the task. Finally, the analysis process was supported by the use of Code Mate in conjunction with specific Linux bash commands.
+
+***
+
+### Date: 2026-05-04
+
+### Period: 2 hours
+
+### Cooperators
+* Abdullah Rezaei
+
+### Objectives
+* **Installing tools:** Installing tools for analyzing 
+* **Gathering information:** Getting required information for overview part using tools
+* **Writing the overview:** Writing specific parts of the overview
+
+### Activities & Effort
+* [x] Installing tools: Installing code-maat and cargo package manager
+* [x] Gathering information: Extracting the number of packages, modules and authors of the project in CSV format
+* [x] Writing the overview: Writing the reports about the packages, modules and authors for overview in MD format
+
+### Report
+The selected tools installed and environment for project set up successfully, The required information generated as a sort of CSV files for packages, modules and authors and their amount of contribution.
+According to the project specifications from the slides, the information presented as the overview and the results and CSV files shared with teammates. 
 
 ***
