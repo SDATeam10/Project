@@ -13,11 +13,7 @@
 -->
 
 ## Introduction
-Rust Analyzer can be thought of as a collection of libraries working together to provide a structured syntactic and semantic analysis of rust source code.
-
-As such, Rust Analyzer can be used in many ways by many users.
-For instance, one project may wish to import the crate `syntax` to obtain both an abstract and concrete syntax tree (AST and CST respectively) of some piece of rust code.
-While another project may use the crate `hir` to derive semantic meaning from a valid AST generated through the `syntax` crate. Yet another project may wish to interact directly with Rust Analyzer through the LSP protocol to obtain IDE level features.
+Rust Analyzer is structured using a **compiler-as-a-library** architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to note that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
 
 <!--
 Note from Marco Oliviero:
@@ -32,7 +28,7 @@ Cfr:
 
 In this analysis we focused our attention on what is probably the most common use case for Rust Analyzer: a user interacting with Rust Analyzer through an IDE to obtain language tooling features (such as code completion, type checking, error checking, goto-definitions, … ).
 
-These different use cases, however, are visible in Rust Analyzer's loosely layered architecture. Each layer exposes a clear API boundary and builds on top of lower level abstractions. This way a user can choose to use individual components in isolation or combine them to obtain progressively higher level analysis of rust code.
+To support this highly interactive environment, Rust Analyzer relies on a loosely layered architecture where each internal layer exposes a clear API boundary and builds on top of lower-level abstractions. This decoupling allows the system to utilize internal components in isolation. By combining these modular pieces, the architecture successfully achieves the fast, incremental computation required for responsive IDE features.
 
 ## Context level
 <!--
@@ -130,38 +126,51 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
     * You might also use components coupling and cohesion metrics to support your reasoning
 -->
 
+### Robustness and Fault Tolerance
+In an IDE the code is most of the time broken. Due to that, the architecture must treat broken code as the normal state, without generating failures, and this is an important feature of Rust Analyzer architecture, having resistence to uncomplete or malformed inputs and internal failures. This is reached by these principles:
 
-***
+* **Non-destructive parsing**: `syntax` crate guarantees that parsing never fails, indeed it returns `(Tree, Vec<Error>)` instead of `Result<T, Error>`. This ensures that the AST is always generated, even with error nodes, allowing the semantic layer to provide features like *code completion*.
+* **Graceful cancellation**: when a user types a new character, any background process which is analyzing the old code must be stopped. This is done by the `salsa` database, which bumps a revision counter, causing background threads to panic. The outer LSP boundary catches these panics using `catch_unwind` and transforms them into graceful cancellation responses for the IDE, preventing the system from crashing while freeing up CPU resources immediately.
+* **Process isolation for external code**: Rust heavily utilizes Procedural Macros, which execute custom, third-party code during compilation. Because poorly written macros can infinite-loop or panic, Rust Analyzer delegates macro expansion to an entirely separate OS process (`proc-macro-srv`). This creates a strict fault-isolation boundary: if a macro crashes, only the child process dies, while the main language server remains responsive.
 
-# Architectural notes
-These are some of my personal notes on how some components work, taken mostly from this [palylist](https://www.youtube.com/playlist?list=PLhb66M_x9UmrqXhQuIpWC5VgTdrGxMx3y):
-
-## VFS + Paths
+### Portability and Determinism
 Rust Analyzer uses a virtual file system to abstract away how files are actually stored in the file system.
 This is done for several reasons:
 1. Rust Analyzer, to avoid occupying too much memory, has to be able to create derived data, forget about it and then recompute it again. Rust Analyzer is therefore mostly concerned with storing stable, versioned snapshots of file contents, so that the analysis can be incremental and deterministic. 
 2. Rust Analyzer wants to be *platform-agnostic*, it should be able to work regardless of the underlying file system used by the OS. The VFS helps decouple the internal representation of files from how the OS keeps track of them. Only specific submodules (`loader`) know actual OS paths.
-3. On a similar vein, Rust Analyzer would also like to be able to support Multi-file system works (for example, projects written on a Windows machine, but analysed on a separate Linux server).
+3. On a similar vein, Rust Analyzer would also like to be able to support Multi-file system works (for example, projects written on a Windows machine, but analyzed on a separate Linux server).
 
-For Rust Analyzer is much simpler to create an internal representation of files as text snapshots indexed by `FileId`, removing direct dependence on OS paths and file system semantics.
+For Rust Analyzer is much simpler to create an internal representation of files as text snapshots indexed by an ID, removing direct dependence on OS paths and file system semantics. To achieve this, stored files aren't identified by their paths, but through a field called `FileId`. 
+ 
+Using IDs to identify files has another important consequence: it makes it very hard to go from a `FileId` to an actual file on the OS file system.
+This makes it easier to avoid mistakes where a developer accidentally reads a file directly and causes problems.
+This way, access to files happens strictly through the *virtual file system*.
+This trend is visible throughout this whole component, file system specific information is systematically erased and only the virtual representation is available to the rest of the project.
 
-To achieve this, files are stored identified not by their paths, but through an ID, called `FileId`. 
-
-> **Architecture Invariant** 
-> Using IDs to identify files has another important consequence: it makes it very hard to go from a `FileId` to an actual file on the OS file system.
-> This makes it easier to avoid mistakes where a developer accidentally reads a file directly and causes problems.
-> This way, access to files happens strictly through the *virtual file system*.  
->
-> This trend is visible throughout this whole component, file system specific information is systematically erased and only the virtual representation is available to the rest of the project.
-
+<!--
 > **Architecture Invariant**
 > VFS doesn't perform any IO directly and doesn't load or read files, its job is only to record state. The VFS is updated through events such as `set_file_contents`, which in turn updates the `changes` array.
 >
 > It's instead `loader.rs` job to perform the actual read of the file. It is both able to read files and detect when they have been changed (and emit the associated events). The 'watching' functionality is a non-trivial issue to solve, as most raw OS APIs don't offer a reliable mechanism to detect changes. The crate `vfs_notify` is an implementation of `loader::Handle` and implements the file watching function.
 >
 > The file watching bits here are untested and quite probably buggy. For this reason, by default Rust Analyzer doesn't watch files and relies on editor’s file watching capabilities instead.
+-->
 
-`FileSet` is a special module that allows VFS to be split into "chunks" that roughly correspond to single crate. This is quite useful because it allows to prevent the propagation of changes across the whole VFS, thus help limit recomputation by grouping related files. 
+`FileSet` is a special module that allows VFS to be split into "chunks" that roughly correspond to single crate. This is quite useful because it allows to prevent the propagation of changes across the whole VFS, thus help limit recomputation by grouping related files.
+
+### Performance and Responsiveness
+To provide real-time IDE features (such as auto-completion and type checking) without noticeable latency, `rust-analyzer` must return results in milliseconds. Because executing a full compilation cycle on every keystroke is computationally impossible, the architecture relies heavily on **Incremental Computation**, driven by an underlying in-memory database component called `salsa`.
+
+* **Query-Based Architecture**: Instead of a traditional compiler pipeline (Lexing $\rightarrow$ Parsing $\rightarrow$ Type Checking), the architecture is modeled as a database of facts. The raw source files are the "inputs" and everything else (ASTs, resolved types, diagnostics) is a "derived query". `salsa` automatically tracks the dependencies between these queries.
+* **Granular Cache Invalidation**: When the user types a character, `rust-analyzer` packages the modification into a `Change` struct and applies it to the database. Because `salsa` tracks exact query dependencies, it only invalidates and recomputes the specific derived data affected by that edit (e.g., the local variables within the currently edited function), leaving the rest of the project's semantic model cached and instantly available.
+* **Durability Levels (**`HIGH` **vs** `LOW`**)**: By default, changing any input in a global database might invalidate the entire cache. To prevent this, the architecture implements a strict classification of data volatility using "Durability" levels. User code being actively edited is marked as `Durability::LOW`, while external dependencies and the Rust standard library are marked as `Durability::HIGH`. Modifying low-durability data does not trigger a revalidation of high-durability data, saving massive amounts of CPU cycles and allowing the server to respond instantly.
+* **Separation of Compiler and IDE State**: To further optimize performance and prevent the compiler layers from doing unnecessary work, the database is split into two distinct traits: `SourceDatabase` (for core compiler logic) and `SourceDatabaseExt` (for IDE-specific needs). This strict boundary ensures that the core semantic analyzer is never forced to recompute its state just because an IDE-only visual feature changed.
+
+***
+
+# Architectural notes
+These are some of my personal notes on how some components work, taken mostly from this [palylist](https://www.youtube.com/playlist?list=PLhb66M_x9UmrqXhQuIpWC5VgTdrGxMx3y):
+ 
 
 ## IDE crate
 Main facade for the language server. It provides a stable, query-based API over the semantic layer. It also converts rich semantic data structures used internally into simpler data structures which can be more easily serialized as well as implementing IDE features such as completion, hover, ….
@@ -245,7 +254,7 @@ The `CrateGraph`, as the name implies is a *graph*: each node is a *crate* and e
 > The abstraction provided by `CrateGraph` is a deliberate choice in order to decouple Rust Analyzer from the specific build tooling used (mainly cargo). For this reason `CrateGraph` provides its own definition for some concepts present in cargo. Most importantly, some aspects are simplified. For example, "features", a cargo concept, are not present directly in `CrateGraph`, but are lowered into `cfg` style representation.
 
 ---
-
+<!--
 ## Base Database Crate
 This crate defines an incremental in-memory database for Rust Analyzer. Most importantly it defines important types, such as `CrateGraph`, `SourceRoot`, inputs to change the state of the world and a set of queries for reading the current state.
 
@@ -291,7 +300,7 @@ This is necessary because some files may not be part of the `CrateGraph` yet, bu
 > Low durability inputs (e.g., user code) only invalidate queries that depend on low durability data, while high durability inputs (e.g., standard library or dependencies) invalidate all queries.
 >
 > This allows Salsa to avoid revalidating large portions of the query graph (such as dependencies) when only frequently changing inputs are modified.
-
+-->
 
 
 
