@@ -72,3 +72,39 @@ More in details:
 * `Code completition`: the flow describes the situation when the editor suggests a possible code completition while the user is writing. More importance has to be brought to `ide-completition` crate, which is an example of responsibility isolation, due to the complicate action to be performed
 
 * `Signature help`: the flow describes the situation when a user is inserting the arguments in a defined function, and the editor helps him by showing what the function expects
+
+***
+
+### Date: 2026-04-28
+
+### Period: 2 hours
+
+### Objectives
+* **Understand better internal architecture and crates' functioning**: understand better what every crate does and which is its place in the architecture and general overview
+
+### Activities & Effort
+* [x] Understood more details about some crates which are essential for the workflow of the system, like `hir`, `syntax` or `salsa` crates
+
+### Report
+
+Today's work was dedicated on discovering in a more detailed way the tasks in each crate. By reading the guide `rust-analyzer/docs/book/src/contributing/guide.md` it has been possible. For example how the `salsa` framework is queried to get any analysis information after every change. Or more important how syntax tree are built and visited.
+
+***
+
+### Date: 2026-05-05
+
+### Period: 3 hours
+
+### Objectives
+* **Architecture report**: contribute on writing the report for architecture part
+
+### Activities & Effort
+* [x] Reviewed the already written things in the report
+* [x] Contributed on writing more things in the report
+
+### Report
+
+Today's work was dedicated on reviewing and writing the report for the architecture part of Rust Analyzer. More specifically:
+* checked the grammatical, syntattical and conceptual correctness of what my collegue already wrote
+* adjusted the introduction
+* Started to write the `Architectural characteristics` part 
