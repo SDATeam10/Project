@@ -1,0 +1,31 @@
+# Individual Journal: Nima
+
+***
+
+### Date: 2026-05-04
+
+### Period: 4 hours
+
+### Cooperators
+* Abdullah Rezaei
+* Saeid Albouyeh
+
+### Objectives
+* Go through the codebase to find the 4 design patterns required for the Design report.
+* Write down the analysis (roles, problem solved, alternatives) for each pattern based on Prof. Torchiano's slides.
+
+### Activities & Effort
+* [x] Searched the `ide` and `syntax` crates to see how they structure the code.
+* [x] Found 4 concrete patterns: Facade, Visitor, Builder, and Strategy.
+* [x] Drafted the descriptions and pros/cons for these patterns.
+* [x] Added the final text to the `Design.md` file.
+
+### Report
+
+Today I spent most of my time looking for design patterns to complete the missing section in our Software Design report. Since Abdullah already mapped out the dependencies, it was a bit easier to know where to look. I checked Professor Torchiano's slides and managed to map 4 patterns in the `rust-analyzer` code:
+- Facade (in the `ide` crate)
+- Visitor (used for AST traversal in `syntax`)
+- Builder (in `syntax::make`)
+- Strategy (inside `ide_completion`)
+
+I wrote down why they were used and what alternatives existed, then pushed the updates to `Design.md`.
