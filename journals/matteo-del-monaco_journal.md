@@ -104,3 +104,8 @@
     - `src/deliverables/Architecture.md` : +5/-0
 - **12:39:08 — feat: base database crate**
     - `src/deliverables/Architecture.md` : +45/-0
+
+### 2026-05-06
+- **11:57:11 — chore: moved architectural notes from `src/deliverables/Architecture.md` to `res/architecture-notes.md`**
+    - `res/architecture-notes.md` : +166/-0
+    - `src/deliverables/Architecture.md` : +0/-139
