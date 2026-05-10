@@ -157,7 +157,62 @@ This is necessary because some files may not be part of the `CrateGraph` yet, bu
 >
 > This allows Salsa to avoid revalidating large portions of the query graph (such as dependencies) when only frequently changing inputs are modified.
 
+---
 
+## Syntax Overview
+The crate `syntax` provides an API for interacting with Rust Analyzer syntax trees.
+The underlying implementation is split across multiple crates: the `parser` crate implements Rust grammar and parsing, while the `rowan` library provides the underlying lossless syntax tree infrastructure used by the `syntax` crate.
+
+This crate is of particular significance, as it deviates from the standard implementation of a compiler pipeline commonly found in textbooks.
+A compiler designed to work for an IDE has different needs than a traditional compiler. The former is not as much as a "solved" problem as the latter.
+
+Generally, a typical compiler pipeline can look like this:
+
+```mermaid
+flowchart LR
+
+text --lexing--> lt["List<br>of<br>Tokens"]
+lt --parsing--> AST
+AST --desugaring--> sast["Simplified <br>AST"]
+sast --"nameres <br>&<br> type inference"--> aast["Annotated <br>AST"]
+aast --lowering--> CFG
+CFG --> backend["Backend<br>(es. LLVM)"]
+```
+
+Notice that the transformation is strictly one way and is inherently lossy. The compiler also doesn't need to know much about the original text.
+The only information that is needed is to know the position of the different spans to provide diagnostics and error messages.
+
+An IDE, on the other hand, requires the transformation to remain reversible; features like code actions, auto imports and quick fixes, need to recover information about the text that generated them in order to work.
+
+Additionally, the parsing and compiling chain in an IDE needs to be able to deal with broken or incomplete code in order to be able to provide useful actions to the user.
+
+An aspect that shows this dichotomy quite well is that compilers don't care about white spaces or comments, whereas many IDE functionalities rely on them.
+
+The main entry point is `SourceFile`, the root node of any AST tree built using Rust Analyzer, as it represents a source rust file. Parsing of a source file is achieved through the methods `SourceFile::parse()`, which returns a `Parse<SourceFile>` object containing both syntax tree and potential syntax errors. 
+
+> **Architecture Invariant** 
+> There are a couple of important differences between a traditional compiler parser and an IDE parser.
+> First, as mentioned before, the CST built by Rust Analyzer is a *lossless* CST, and contains every bit of information from the original text. The AST is implemented as a typed wrapper over the CST.
+> It's possible to move back and forth between CST and text representation.
+> Moreover, an IDE needs to keep on working even with incorrect code and should not try to repair it on the fly (like a traditional compiler) as it's key that missing elements remain so in order to provide accurate feedback on the source text. AST nodes are specifically designed to be able to handle possibly missing fields.
+> Because of this, the method `SourceFile::parse()` *always* returns a `Parse` with a syntax tree and a list of errors, rather than `Result<Ast, SyntaxError`.  
+>
+> This choice also influences diagnostics as they are lightweight compared to compiler diagnostics. 
+> Rust Analyzer assumes a different workflow, where fast incremental feedback is often more important than producing highly sophisticated error messages.
+
+
+> **Architecture Invariant** 
+> AST nodes are intentionally shallow wrappers over syntax nodes. This allows to provide a typed view of the CST that is resilient to missing or incomplete data. The different components of each syntax node can be accessed through a series of getter methods return an `Option<_>`.
+
+The `syntax` API provides a method for quickly switching between a typed AST to an untyped CST, by calling the method `ast::syntax()`. 
+To move from a CST to an AST, you can call the method `ast::Expr::cast()` 
+
+Each syntax node keeps track of:
+- Its `kind`, a C style enum that identifies the "type" of node.
+- The text range.
+- A view over the corresponding source text.
+
+This crate also provides an API for different traversal methods acting on AST trees, such as `parent`, `children`, `children_with_tokens`, `siblings`, `ancestors`, `descendants`, `preorder`.
 
 
 
