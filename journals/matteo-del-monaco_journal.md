@@ -120,3 +120,12 @@
 - **16:53:04 — fix: merge conflict + typos**
     - `journals/marco-oliviero_journal.md` : +18/-1
     - `res/architecture-notes.md` : +14/-0
+- **17:10:07 — feat: added technology used in some diagrams**
+    - `img/diagrams/architecture/component.png` : +0/-0
+    - `img/diagrams/architecture/container.png` : +0/-0
+    - `img/diagrams/architecture/layered-architecture.png` : +0/-0
+    - `img/diagrams/architecture/system-context.png` : +0/-0
+    - `src/diagrams/architecture/container.puml` : +8/-5
+    - `src/diagrams/architecture/system-context.puml` : +6/-4
+- **18:19:06 — feat: comment on SOLID**
+    - `res/architecture-notes.md` : +23/-0
