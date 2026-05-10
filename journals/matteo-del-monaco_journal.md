@@ -109,3 +109,14 @@
 - **11:57:11 — chore: moved architectural notes from `src/deliverables/Architecture.md` to `res/architecture-notes.md`**
     - `res/architecture-notes.md` : +166/-0
     - `src/deliverables/Architecture.md` : +0/-139
+
+### 2026-05-07
+- **10:52:08 — chore: added shell.sh to gitignore**
+    - `.gitignore` : +1/-0
+
+### 2026-05-10
+- **16:45:35 — feat: syntax overview**
+    - `res/architecture-notes.md` : +55/-0
+- **16:53:04 — fix: merge conflict + typos**
+    - `journals/marco-oliviero_journal.md` : +18/-1
+    - `res/architecture-notes.md` : +14/-0
