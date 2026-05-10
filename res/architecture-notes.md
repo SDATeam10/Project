@@ -217,6 +217,29 @@ This crate also provides an API for different traversal methods acting on AST tr
 ---
 
 ## SOLID principles and its violations
+<!-- 
+Something that is crucial we keep in mind is that Rust is not a classic OOP language.
+Solid principles were originally formulated in a very different context, and it's main subject of study were languages heavily based on inheritance and subtype polymorphism.
+
+Rust follows a different design philosophy as it favors composition, algebraic data types, and trait-based abstractions over classical inheritance.
+
+Because of this, some of the SOLID principles aren't directly applicable, and are often reinterpreted trhough traits, modular boundries, and composition patterns. 
+
+Generally the SRP principle is followed througout the project, as you highlighted. 
+There are many modules with a clear intent and focus.
+For example, many concepts are intentionally separated, such as AnalysisHost vs Analysis (state mutation vs immutable state snapshot), vfs vs vfs_notify (current state tracking vs I/O and filesystem watching) and parser vs syntax (grammar vs typed CST/AST wrapper).
+
+For the same reason, I believe the OCP is generally followed as well. For example, the most likely sources of changes (the language itself, and the LSP protocol) have been clearly separated into their own section with their own modules, which helps contain changes.Additionally its query-based architecture (via Salsa), allows for new IDE features to be added by introducing new queries rather than modifying existing computation logic.
+However, it is not strictly followed in all layers, since core structures (e.g., CrateGraph, AnalysisHost, or syntax abstractions) are still modified when the language or performance requirements evolve.
+
+I would say DIP is followed at the boundry layer, with each components referencing the top level APIs defined by other containers.
+This is especially evident in components such as VFS and the Salsa-based database layer. In this layer, higher-level IDE logic operates over FileId and virtual file abstractions, while actual filesystem I/O is delegated to loader.rs or vfs_notify. Similarly, incremental computation is expressed through abstract query traits rather than concrete data manipulation.
+
+LSP is tricky, as the standard OOP definition doesn't apply (as rust doesn't have inheritance). If reinterpreted as "implementation substitutability under a shared interface(trait)" basically as long as you have a trait and multiple possible implementation of that trait you would be set, which feels a little reductive.
+
+Finally the ISP principle can be found in different aspects, like the decision to split the database in two separate interfaces (SourceDatabase and SourceDatabaseExt) to hide information where not relevant. Many of the components mentioned in the SRP section elicit a ISP friendly behaviour, as the interface they provide is relatively narrow.
+Due to the design, top level API boundry components inevitabily end up providing quite fat API, though I wouldn't call this an error on Rust Analyzer's team part.
+-->
 
 By having a look at the architecture of the crates, we can see a clear application of the Single Responsibility Principle (SRP).
 For example, the `ide` crate is split in some more crates in the form of `ide-*` to separate the responsibility for specific actions, like `ide-completion` which is responsible for code completion requests. Another example is the `vfs` crate, which has the only responsibility of maintaining a memory map of file text.
