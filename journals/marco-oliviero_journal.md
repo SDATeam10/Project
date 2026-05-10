@@ -107,4 +107,21 @@ Today's work was dedicated on discovering in a more detailed way the tasks in ea
 Today's work was dedicated on reviewing and writing the report for the architecture part of Rust Analyzer. More specifically:
 * checked the grammatical, syntattical and conceptual correctness of what my collegue already wrote
 * adjusted the introduction
-* Started to write the `Architectural characteristics` part 
+* Started to write the `Architectural characteristics` part
+
+***
+
+### Date: 2026-05-09
+
+### Period: 2 hours
+
+### Objectives
+* **Architecture notes**: searching for other architectural notes
+
+### Activities & Effort
+* [x] Searched for SOLID principles' applications and violations in rust-analyzer architecture
+* [x] Wrote these notes in the `architecture-note.md` document, ready for approval for inserting in main architecture report
+
+### Report
+
+Today's work was dedicated investigating, in a more detailed way, in the Rust-analyzer architecture to individuate the applications of SOLID principle, but more importantly for their violations.

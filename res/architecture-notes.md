@@ -214,8 +214,22 @@ Each syntax node keeps track of:
 
 This crate also provides an API for different traversal methods acting on AST trees, such as `parent`, `children`, `children_with_tokens`, `siblings`, `ancestors`, `descendants`, `preorder`.
 
+---
 
+## SOLID principles and its violations
 
+By having a look at the architecture of the crates, we can see a clear application of the Single Responsibility Principle (SRP).
+For example, the `ide` crate is split in some more crates in the form of `ide-*` to separate the responsibility for specific actions, like `ide-completion` which is responsible for code completion requests. Another example is the `vfs` crate, which has the only responsibility of maintaining a memory map of file text.
 
+On the other hand we can observe a violation of the Open/Closed Principle at the `hir-*` crates.
+Indeed, `hir-expand`, `hir-def` and `hir_ty` are not thought as API boundary, so this will make more difficult to extend these components without modification.
+<!-- There's a little detail that is misleading here. In the architectue.md document it is said that hir-expand, hir-def, hir_ty will never be an api boudary, but the hir crate himself is an api boundary. So I don't know if it is good to mention this violation, or if it is an actual vilation or not. -->
 
+Keeping the attention to these crates, another SOLID principle violation can be seen.
+These components integrate deeply with salsa, but with small abstraction, going against the Dependency Inversion Principle (DIP).
 
+But these violations are just trade-offs, because it has been chosen to give more importance to other characteristics, like incremental computation or performance.
+For example, there is a Liskov Substitution Principle (LSP) violation in the `syntax` crate.
+That is because, according to the LSP, the formal Rust's language grammar says that a `Function` must have the `fn` keyword, a name, a parameter list and a body.
+But in Rust Analyzer, the `syntax` crate violates this, modelling every child of the AST as a `Option<T>` for performance reason.
+In fact, with this structure, if a node is missing, the program will not crash, instead it could mean the presence of missing code and a request for its completion.
