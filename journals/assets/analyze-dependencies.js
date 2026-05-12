@@ -27,6 +27,7 @@ if (fs.existsSync(CRATE_REPORT_FILE)) fs.unlinkSync(CRATE_REPORT_FILE);
 if (fs.existsSync(GLOBAL_REPORT_FILE)) fs.unlinkSync(GLOBAL_REPORT_FILE);
 
 fs.writeFileSync(CRATE_REPORT_FILE, '=== Rust-Analyzer Project Crate-Level Dependency Analysis ===\n\n');
+fs.appendFileSync(CRATE_REPORT_FILE, `Total Crates Analyzed: ${crates.length}\n\n`);
 fs.writeFileSync(GLOBAL_REPORT_FILE, '=== Rust-Analyzer Project GLOBAL Dependency Analysis ===\n\n');
 fs.appendFileSync(GLOBAL_REPORT_FILE, `Total Crates Analyzed: ${crates.length}\n\n`);
 
@@ -168,12 +169,10 @@ globalAllNodes.forEach(node => {
     if (!(node in globalFanIn)) globalFanIn[node] = 0;
 });
 
-const sortDescGlobal = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, 15);
-const sortAscGlobal = (obj) => Object.entries(obj).sort((a, b) => a[1] - b[1]).slice(0, 15);
+const sortDescGlobal = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, 5);
+const sortAscGlobal = (obj) => Object.entries(obj).sort((a, b) => a[1] - b[1]).slice(0, 5);
 
-let globalReport = `\n#################################################################\n`;
-globalReport += `GLOBAL SUMMARY (ACROSS ALL CRATES)\n`;
-globalReport += `#################################################################\n\n`;
+let globalReport = '';
 
 globalReport += `HIGHEST FAN-OUT:\n`;
 sortDescGlobal(globalFanOut).forEach(([node, count]) => globalReport += `  ${count} dependencies\t -> ${node}\n`);
