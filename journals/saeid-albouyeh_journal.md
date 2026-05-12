@@ -50,3 +50,26 @@ The selected tools installed and environment for project set up successfully, Th
 According to the project specifications from the slides, the information presented as the overview and the results and CSV files shared with teammates. 
 
 ***
+
+### Date: 2026-05-12
+
+### Period: 6 hours
+
+### Cooperators
+* Abdullah Rezaei
+
+### Objectives
+* **Hotspot Analysis:** Identifying frequently modified files and active crates
+* **Temporal Coupling Analysis:** Extracting temporal coupling data from the Git history
+* **Structural Coupling Analysis:** Generating the native SCIP index of the repository
+* **Coupling Intersection:** Cross-referencing temporal and structural dependencies to identify distinct code relationships
+
+### Activities & Effort
+* [x] Hotspot & Revision Analysis: Extracted file revision frequencies using `code-maat` and generated graphs to visualize the top crates and the top 50 architectural hotspots
+* [x] Temporal Coupling: Generated temporal coupling data using the `code-maat` tool based on the repository's version control history
+* [x] Structural Dependency Graph: Generated the codebase's SCIP index using the `rust-analyzer scip .` (using the project to analyze itself!) command to capture code dependencies
+* [x] Cross-Analysis Scripting: Executed a custom Python script utilizing the Protobuf library to parse the binary SCIP graph and check each temporally coupled pair for direct structural links
+* [x] Result Validation: Exported the cross-referenced data and validated links against the source code
+
+### Report
+File revision frequencies were extracted using code-maat and visualized into graphs to identify architectural hotspots and the most active crates in the project. The temporal coupling of the project was also analyzed by generating a CSV file using code-maat from the Git history. To evaluate structural dependencies, the SCIP index of the codebase was generated natively using rust-analyzer. A Python script utilizing the Protobuf library was then used to parse the binary index and cross-reference the structural dependencies with the temporal coupling data. The final results were compiled into a new CSV file, which successfully categorized file pairs into directional, bidirectional, and non-structurally coupled relationships. These findings were manually validated against the repository's source code to ensure accuracy.
