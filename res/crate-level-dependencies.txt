@@ -1,0 +1,1100 @@
+=== Rust-Analyzer Project Crate-Level Dependency Analysis ===
+
+Total Crates Analyzed: 36
+
+
+=========================================
+CRATE: base-db
+=========================================
+
+
+Highest FAN-OUT:
+  12 dependencies	 -> base_db::input
+  8 dependencies	 -> base_db
+  8 dependencies	 -> base_db::editioned_file_id
+  3 dependencies	 -> base_db::change
+  3 dependencies	 -> base_db::relevant_crates
+
+Lowest FAN-OUT:
+  0 dependencies	 -> query_group_macro
+  0 dependencies	 -> vfs
+  0 dependencies	 -> vfs::anchored_path
+  0 dependencies	 -> vfs::file_set
+  0 dependencies	 -> vfs::vfs_path
+
+Highest FAN-IN:
+  7 times		 -> base_db::input
+  5 times		 -> vfs
+  5 times		 -> base_db
+  2 times		 -> base_db::editioned_file_id
+  2 times		 -> vfs::anchored_path
+
+Lowest FAN-IN:
+  0 times		 -> base_db::change::file_text_durability
+  0 times		 -> base_db::change::source_root_durability
+  0 times		 -> base_db::relevant_crates
+  0 times		 -> base_db::source_root_crates
+  0 times		 -> base_db::toolchain_channel
+
+
+=========================================
+CRATE: cfg
+=========================================
+
+
+Highest FAN-OUT:
+  8 dependencies	 -> cfg::cfg_expr
+  4 dependencies	 -> cfg
+  4 dependencies	 -> cfg::cfg_expr::next_cfg_expr
+  2 dependencies	 -> cfg::dnf
+  1 dependencies	 -> cfg::dnf::distribute_conj
+
+Lowest FAN-OUT:
+  0 dependencies	 -> intern::symbol
+  0 dependencies	 -> intern::symbol::symbols
+  0 dependencies	 -> tt::iter
+  0 dependencies	 -> tt::storage
+  0 dependencies	 -> syntax::ast
+
+Highest FAN-IN:
+  8 times		 -> cfg::cfg_expr
+  3 times		 -> intern::symbol
+  2 times		 -> tt::iter
+  1 times		 -> cfg::dnf
+  1 times		 -> intern::symbol::symbols
+
+Lowest FAN-IN:
+  0 times		 -> cfg::cfg_expr::next_cfg_expr
+  0 times		 -> cfg::dnf::distribute_conj
+  0 times		 -> cfg::dnf::flatten
+  0 times		 -> cfg::dnf::make_dnf
+  0 times		 -> cfg::dnf::make_nnf
+
+
+=========================================
+CRATE: edition
+=========================================
+
+
+Highest FAN-OUT:
+
+Lowest FAN-OUT:
+
+Highest FAN-IN:
+
+Lowest FAN-IN:
+
+
+=========================================
+CRATE: hir
+=========================================
+
+
+Highest FAN-OUT:
+  119 dependencies	 -> hir
+  67 dependencies	 -> hir::semantics
+  50 dependencies	 -> hir::source_analyzer
+  32 dependencies	 -> hir::symbols
+  31 dependencies	 -> hir::diagnostics
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db::all_crates
+  0 dependencies	 -> base_db::editioned_file_id
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> cfg
+  0 dependencies	 -> cfg::cfg_expr
+
+Highest FAN-IN:
+  46 times		 -> hir_def
+  46 times		 -> hir_ty::db
+  41 times		 -> hir
+  24 times		 -> hir::semantics
+  23 times		 -> hir_def::expr_store
+
+Lowest FAN-IN:
+  0 times		 -> hir::as_assoc_item
+  0 times		 -> hir::as_extern_assoc_item
+  0 times		 -> hir::as_name_opt
+  0 times		 -> hir::ast::generated::nodes
+  0 times		 -> hir::ast::node_ext
+
+
+=========================================
+CRATE: hir-def
+=========================================
+
+
+Highest FAN-OUT:
+  51 dependencies	 -> hir_def::nameres::collector
+  49 dependencies	 -> hir_def::expr_store::lower
+  40 dependencies	 -> hir_def
+  36 dependencies	 -> hir_def::expr_store::pretty
+  34 dependencies	 -> hir_def::signatures
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> edition
+  0 dependencies	 -> hir_expand
+  0 dependencies	 -> hir_expand::attrs
+  0 dependencies	 -> hir_expand::builtin::attr_macro
+
+Highest FAN-IN:
+  100 times		 -> hir_def::db
+  84 times		 -> hir_def
+  66 times		 -> hir_expand
+  64 times		 -> syntax::ast::generated::nodes
+  56 times		 -> base_db::input
+
+Lowest FAN-IN:
+  0 times		 -> hir_def::attrs::attrs_from_ast_id_loc
+  0 times		 -> hir_def::attrs::attrs_source
+  0 times		 -> hir_def::attrs::collect_attrs
+  0 times		 -> hir_def::attrs::collect_field_attrs
+  0 times		 -> hir_def::attrs::docs::expand_doc_expr_via_macro_pipeline
+
+
+=========================================
+CRATE: hir-expand
+=========================================
+
+
+Highest FAN-OUT:
+  34 dependencies	 -> hir_expand::db
+  33 dependencies	 -> hir_expand
+  26 dependencies	 -> hir_expand::db::expand_speculative
+  26 dependencies	 -> hir_expand::declarative
+  23 dependencies	 -> hir_expand::builtin::derive_macro
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db::editioned_file_id
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> edition
+  0 dependencies	 -> intern
+  0 dependencies	 -> intern::symbol
+
+Highest FAN-IN:
+  101 times		 -> hir_expand::db
+  101 times		 -> span
+  84 times		 -> hir_expand
+  78 times		 -> tt
+  78 times		 -> tt::storage
+
+Lowest FAN-IN:
+  0 times		 -> hir_expand::ast::generated::nodes
+  0 times		 -> hir_expand::attrs::collect_item_tree_attrs
+  0 times		 -> hir_expand::attrs::expand_cfg_attr_with_doc_comments
+  0 times		 -> hir_expand::attrs::parse_path_comma_token_tree
+  0 times		 -> hir_expand::builtin
+
+
+=========================================
+CRATE: hir-ty
+=========================================
+
+
+Highest FAN-OUT:
+  71 dependencies	 -> hir_ty::infer
+  55 dependencies	 -> hir_ty::mir::eval
+  49 dependencies	 -> hir_ty::mir::lower::as_place
+  48 dependencies	 -> hir_ty::mir::lower
+  46 dependencies	 -> hir_ty
+
+Lowest FAN-OUT:
+  0 dependencies	 -> hir_def
+  0 dependencies	 -> hir_def::hir::type_ref
+  0 dependencies	 -> hir_def::resolver
+  0 dependencies	 -> hir_expand::name
+  0 dependencies	 -> hir_ty::next_solver::interner::tls_db::with_attached_db
+
+Highest FAN-IN:
+  233 times		 -> hir_def
+  218 times		 -> hir_ty::next_solver::interner
+  204 times		 -> hir_ty::db
+  201 times		 -> hir_ty::next_solver::ty
+  134 times		 -> hir_ty::next_solver::generic_arg
+
+Lowest FAN-IN:
+  0 times		 -> hir_ty::associated_type_shorthand_candidates
+  0 times		 -> hir_ty::autoderef::structurally_normalize_ty
+  0 times		 -> hir_ty::binder
+  0 times		 -> hir_ty::builtin_derive::coerce_pointee_new_type_param
+  0 times		 -> hir_ty::builtin_derive::coerce_pointee_params
+
+
+=========================================
+CRATE: ide
+=========================================
+
+
+Highest FAN-OUT:
+  74 dependencies	 -> ide
+  27 dependencies	 -> ide::hover::render
+  27 dependencies	 -> ide::static_index
+  25 dependencies	 -> ide::navigation_target
+  25 dependencies	 -> ide::runnables
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db
+  0 dependencies	 -> base_db::change
+  0 dependencies	 -> base_db::editioned_file_id
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> base_db::relevant_crates
+
+Highest FAN-IN:
+  267 times		 -> ide_db
+  229 times		 -> syntax::syntax_node
+  202 times		 -> hir::semantics
+  176 times		 -> syntax::ast::generated::nodes
+  146 times		 -> hir
+
+Lowest FAN-IN:
+  0 times		 -> ide::annotations::annotations
+  0 times		 -> ide::annotations::fn_references
+  0 times		 -> ide::annotations::fn_references::method_range
+  0 times		 -> ide::annotations::resolve_annotation
+  0 times		 -> ide::annotations::should_skip_runnable
+
+
+=========================================
+CRATE: ide-assists
+=========================================
+
+
+Highest FAN-OUT:
+  35 dependencies	 -> ide_assists::handlers::extract_function
+  30 dependencies	 -> ide_assists::handlers::generate_function
+  30 dependencies	 -> ide_assists::utils
+  27 dependencies	 -> ide_assists::handlers::inline_call
+  22 dependencies	 -> ide_assists::handlers::extract_module
+
+Lowest FAN-OUT:
+  0 dependencies	 -> hir::semantics
+  0 dependencies	 -> ide_db
+  0 dependencies	 -> ide_db::assists
+  0 dependencies	 -> syntax::syntax_node
+  0 dependencies	 -> hir_def
+
+Highest FAN-IN:
+  586 times		 -> syntax::ast::generated::nodes
+  475 times		 -> ide_assists::assist_context
+  426 times		 -> syntax::syntax_node
+  306 times		 -> ide_db::assists
+  276 times		 -> ide_db
+
+Lowest FAN-IN:
+  0 times		 -> ide_assists
+  0 times		 -> ide_assists::api
+  0 times		 -> ide_assists::assists
+  0 times		 -> ide_assists::ast::generated::nodes
+  0 times		 -> ide_assists::handlers
+
+
+=========================================
+CRATE: ide-completion
+=========================================
+
+
+Highest FAN-OUT:
+  37 dependencies	 -> ide_completion::completions
+  30 dependencies	 -> ide_completion::context
+  19 dependencies	 -> ide_completion::completions::item_list::trait_impl
+  19 dependencies	 -> ide_completion::context::analysis
+  18 dependencies	 -> ide_completion::render
+
+Lowest FAN-OUT:
+  0 dependencies	 -> ide_db
+  0 dependencies	 -> ide_db::imports::insert_use
+  0 dependencies	 -> ide_db::syntax_helpers::tree_diff::diff
+  0 dependencies	 -> ide_db::text_edit
+  0 dependencies	 -> syntax::ast::make
+
+Highest FAN-IN:
+  174 times		 -> ide_completion::context
+  143 times		 -> ide_db
+  125 times		 -> hir
+  98 times		 -> ide_completion::completions
+  91 times		 -> ide_completion::item
+
+Lowest FAN-IN:
+  0 times		 -> ide_completion::completions::attribute::attr
+  0 times		 -> ide_completion::completions::attribute::cfg
+  0 times		 -> ide_completion::completions::attribute::complete_attribute_path
+  0 times		 -> ide_completion::completions::attribute::complete_known_attribute_input
+  0 times		 -> ide_completion::completions::attribute::diagnostic
+
+
+=========================================
+CRATE: ide-db
+=========================================
+
+
+Highest FAN-OUT:
+  28 dependencies	 -> ide_db::defs
+  27 dependencies	 -> ide_db::search
+  22 dependencies	 -> ide_db::rename
+  21 dependencies	 -> ide_db::imports::insert_use
+  18 dependencies	 -> ide_db::path_transform
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db
+  0 dependencies	 -> base_db::editioned_file_id
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> base_db::set_all_crates_with_durability
+  0 dependencies	 -> hir_def::db
+
+Highest FAN-IN:
+  86 times		 -> syntax::ast::generated::nodes
+  59 times		 -> ide_db
+  56 times		 -> syntax::syntax_node
+  50 times		 -> hir
+  36 times		 -> hir::semantics
+
+Lowest FAN-IN:
+  0 times		 -> ide_db::active_parameter::callable_for_arg_list
+  0 times		 -> ide_db::active_parameter::callable_for_node
+  0 times		 -> ide_db::active_parameter::callable_for_token
+  0 times		 -> ide_db::active_parameter::generic_def_for_node
+  0 times		 -> ide_db::active_parameter::into_comma
+
+
+=========================================
+CRATE: ide-diagnostics
+=========================================
+
+
+Highest FAN-OUT:
+  23 dependencies	 -> ide_diagnostics
+  21 dependencies	 -> ide_diagnostics::handlers::missing_fields
+  20 dependencies	 -> ide_diagnostics::handlers::unresolved_field
+  19 dependencies	 -> ide_diagnostics::handlers::type_mismatch::remove_unnecessary_wrapper
+  18 dependencies	 -> ide_diagnostics::handlers::missing_fields::fixes
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db::all_crates
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> base_db::toolchain_channel
+  0 dependencies	 -> edition
+  0 dependencies	 -> hir
+
+Highest FAN-IN:
+  147 times		 -> ide_diagnostics
+  108 times		 -> hir_expand::files
+  90 times		 -> syntax::ast::generated::nodes
+  89 times		 -> syntax::syntax_node
+  86 times		 -> hir_expand
+
+Lowest FAN-IN:
+  0 times		 -> ide_diagnostics::build_lints_map
+  0 times		 -> ide_diagnostics::default_lint_severity
+  0 times		 -> ide_diagnostics::find_outline_mod_lint_severity
+  0 times		 -> ide_diagnostics::full_diagnostics
+  0 times		 -> ide_diagnostics::handle_diag_from_macros
+
+
+=========================================
+CRATE: ide-ssr
+=========================================
+
+
+Highest FAN-OUT:
+  20 dependencies	 -> ide_ssr
+  17 dependencies	 -> ide_ssr::matching
+  12 dependencies	 -> ide_ssr::replacing
+  12 dependencies	 -> ide_ssr::resolving
+  11 dependencies	 -> ide_ssr::search
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db
+  0 dependencies	 -> base_db::editioned_file_id
+  0 dependencies	 -> hir::semantics
+  0 dependencies	 -> hir_expand::files
+  0 dependencies	 -> ide_db
+
+Highest FAN-IN:
+  19 times		 -> syntax::syntax_node
+  16 times		 -> parser::syntax_kind::generated
+  15 times		 -> syntax::ast::generated::nodes
+  10 times		 -> ide_ssr
+  9 times		 -> ide_db
+
+Lowest FAN-IN:
+  0 times		 -> ide_ssr::fragments::expr
+  0 times		 -> ide_ssr::fragments::fragment
+  0 times		 -> ide_ssr::fragments::item
+  0 times		 -> ide_ssr::fragments::pat
+  0 times		 -> ide_ssr::fragments::stmt
+
+
+=========================================
+CRATE: intern
+=========================================
+
+
+Highest FAN-OUT:
+  5 dependencies	 -> intern
+  2 dependencies	 -> intern::gc
+  1 dependencies	 -> intern::symbol::increase_arc_refcount
+  1 dependencies	 -> intern::symbol::symbols
+  1 dependencies	 -> intern::symbol::symbols::prefill
+
+Lowest FAN-OUT:
+  0 dependencies	 -> intern::intern
+  0 dependencies	 -> intern::intern_slice
+  0 dependencies	 -> intern::symbol
+  1 dependencies	 -> intern::symbol::increase_arc_refcount
+  1 dependencies	 -> intern::symbol::symbols
+
+Highest FAN-IN:
+  4 times		 -> intern::symbol
+  2 times		 -> intern::intern
+  2 times		 -> intern::intern_slice
+  1 times		 -> intern::gc
+  1 times		 -> intern::symbol::symbols
+
+Lowest FAN-IN:
+  0 times		 -> intern
+  0 times		 -> intern::symbol::increase_arc_refcount
+  0 times		 -> intern::symbol::symbols::prefill
+  1 times		 -> intern::gc
+  1 times		 -> intern::symbol::symbols
+
+
+=========================================
+CRATE: load-cargo
+=========================================
+
+
+Highest FAN-OUT:
+  26 dependencies	 -> load_cargo
+  10 dependencies	 -> load_cargo::load_workspace_into_db
+  8 dependencies	 -> load_cargo::load_crate_graph_into_db
+  7 dependencies	 -> load_cargo::resolve_sub_span
+  5 dependencies	 -> load_cargo::load_workspace_at
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> hir_expand::change
+  0 dependencies	 -> hir_expand::db
+  0 dependencies	 -> hir_expand::proc_macro
+  0 dependencies	 -> ide_db
+
+Highest FAN-IN:
+  5 times		 -> hir_expand::proc_macro
+  5 times		 -> load_cargo
+  4 times		 -> base_db::input
+  4 times		 -> ide_db
+  4 times		 -> paths
+
+Lowest FAN-IN:
+  0 times		 -> load_cargo::expander_to_proc_macro
+  0 times		 -> load_cargo::load_crate_graph_into_db
+  0 times		 -> load_cargo::load_proc_macro
+  0 times		 -> load_cargo::load_workspace
+  0 times		 -> load_cargo::load_workspace_at
+
+
+=========================================
+CRATE: macros
+=========================================
+
+
+Highest FAN-OUT:
+
+Lowest FAN-OUT:
+
+Highest FAN-IN:
+
+Lowest FAN-IN:
+
+
+=========================================
+CRATE: mbe
+=========================================
+
+
+Highest FAN-OUT:
+  10 dependencies	 -> mbe::expander::transcriber
+  10 dependencies	 -> mbe::expander::transcriber::expand_subtree
+  10 dependencies	 -> mbe::parser
+  9 dependencies	 -> mbe
+  9 dependencies	 -> mbe::expander::matcher::match_loop
+
+Lowest FAN-OUT:
+  0 dependencies	 -> edition
+  0 dependencies	 -> mbe::macro_call_style
+  0 dependencies	 -> span
+  0 dependencies	 -> span::hygiene
+  0 dependencies	 -> syntax_bridge::to_parser_input::to_parser_input
+
+Highest FAN-IN:
+  27 times		 -> tt
+  22 times		 -> tt::iter
+  21 times		 -> mbe::parser
+  19 times		 -> mbe
+  17 times		 -> span
+
+Lowest FAN-IN:
+  0 times		 -> mbe::expander::expand_rules
+  0 times		 -> mbe::expander::matcher::collect_vars
+  0 times		 -> mbe::expander::matcher::eat_char
+  0 times		 -> mbe::expander::matcher::expect_lifetime
+  0 times		 -> mbe::expander::matcher::expect_separator
+
+
+=========================================
+CRATE: parser
+=========================================
+
+
+Highest FAN-OUT:
+  56 dependencies	 -> parser::grammar::items::consts
+  55 dependencies	 -> parser::grammar::items::traits
+  55 dependencies	 -> parser::grammar::items::use_item
+  54 dependencies	 -> parser::grammar::expressions::atom
+  54 dependencies	 -> parser::grammar::items::adt
+
+Lowest FAN-OUT:
+  0 dependencies	 -> edition
+  1 dependencies	 -> parser::grammar::entry::prefix::block
+  1 dependencies	 -> parser::grammar::entry::prefix::expr
+  1 dependencies	 -> parser::grammar::entry::prefix::item
+  1 dependencies	 -> parser::grammar::entry::prefix::meta_item
+
+Highest FAN-IN:
+  226 times		 -> parser::parser
+  205 times		 -> parser::syntax_kind::generated
+  71 times		 -> parser::token_set
+  32 times		 -> parser::grammar::expressions
+  28 times		 -> parser::grammar
+
+Lowest FAN-IN:
+  0 times		 -> parser
+  0 times		 -> parser::event::process
+  0 times		 -> parser::grammar::attributes::attr
+  0 times		 -> parser::grammar::attributes::cfg_attr_meta
+  0 times		 -> parser::grammar::attributes::cfg_meta
+
+
+=========================================
+CRATE: paths
+=========================================
+
+
+Highest FAN-OUT:
+
+Lowest FAN-OUT:
+
+Highest FAN-IN:
+
+Lowest FAN-IN:
+
+
+=========================================
+CRATE: proc-macro-api
+=========================================
+
+
+Highest FAN-OUT:
+  11 dependencies	 -> proc_macro_api::process
+  10 dependencies	 -> proc_macro_api::bidirectional_protocol
+  9 dependencies	 -> proc_macro_api
+  9 dependencies	 -> proc_macro_api::legacy_protocol
+  8 dependencies	 -> proc_macro_api::legacy_protocol::msg::flat
+
+Lowest FAN-OUT:
+  0 dependencies	 -> paths
+  0 dependencies	 -> span
+  0 dependencies	 -> span::ast_id
+  0 dependencies	 -> tt::storage
+  0 dependencies	 -> tt
+
+Highest FAN-IN:
+  20 times		 -> proc_macro_api
+  14 times		 -> proc_macro_api::process
+  11 times		 -> proc_macro_api::legacy_protocol::msg
+  9 times		 -> span
+  9 times		 -> proc_macro_api::bidirectional_protocol::msg
+
+Lowest FAN-IN:
+  0 times		 -> proc_macro_api::bidirectional_protocol::enable_rust_analyzer_spans
+  0 times		 -> proc_macro_api::bidirectional_protocol::expand
+  0 times		 -> proc_macro_api::bidirectional_protocol::find_proc_macros
+  0 times		 -> proc_macro_api::bidirectional_protocol::run_conversation
+  0 times		 -> proc_macro_api::bidirectional_protocol::run_request
+
+
+=========================================
+CRATE: proc-macro-srv
+=========================================
+
+
+Highest FAN-OUT:
+
+Lowest FAN-OUT:
+
+Highest FAN-IN:
+
+Lowest FAN-IN:
+
+
+=========================================
+CRATE: proc-macro-srv-cli
+=========================================
+
+
+Highest FAN-OUT:
+
+Lowest FAN-OUT:
+
+Highest FAN-IN:
+
+Lowest FAN-IN:
+
+
+=========================================
+CRATE: profile
+=========================================
+
+
+Highest FAN-OUT:
+  2 dependencies	 -> profile
+  1 dependencies	 -> profile::cpu_span
+  1 dependencies	 -> profile::memory_usage::memusage_linux
+  1 dependencies	 -> profile::stop_watch
+  0 dependencies	 -> profile::memory_usage
+
+Lowest FAN-OUT:
+  0 dependencies	 -> profile::memory_usage
+  1 dependencies	 -> profile::cpu_span
+  1 dependencies	 -> profile::memory_usage::memusage_linux
+  1 dependencies	 -> profile::stop_watch
+  2 dependencies	 -> profile
+
+Highest FAN-IN:
+  3 times		 -> profile::memory_usage
+  1 times		 -> profile::stop_watch
+  1 times		 -> profile
+  0 times		 -> profile::cpu_span
+  0 times		 -> profile::memory_usage::memusage_linux
+
+Lowest FAN-IN:
+  0 times		 -> profile::cpu_span
+  0 times		 -> profile::memory_usage::memusage_linux
+  1 times		 -> profile::stop_watch
+  1 times		 -> profile
+  3 times		 -> profile::memory_usage
+
+
+=========================================
+CRATE: project-model
+=========================================
+
+
+Highest FAN-OUT:
+  29 dependencies	 -> project_model::workspace
+  14 dependencies	 -> project_model::workspace::sysroot_to_crate_graph
+  13 dependencies	 -> project_model::workspace::cargo_to_crate_graph
+  12 dependencies	 -> project_model::workspace::project_json_to_crate_graph
+  11 dependencies	 -> project_model::build_dependencies
+
+Lowest FAN-OUT:
+  0 dependencies	 -> paths
+  0 dependencies	 -> cfg
+  0 dependencies	 -> base_db::input
+  0 dependencies	 -> cfg::cfg_expr
+  0 dependencies	 -> project_model::utf8_stdout
+
+Highest FAN-IN:
+  25 times		 -> paths
+  23 times		 -> base_db::input
+  17 times		 -> project_model::manifest_path
+  17 times		 -> project_model::sysroot
+  16 times		 -> toolchain
+
+Lowest FAN-IN:
+  0 times		 -> project_model::env
+  0 times		 -> project_model::parse_cfg
+  0 times		 -> project_model::project_json::cfg_
+  0 times		 -> project_model::project_json::cfg_::serialize
+  0 times		 -> project_model::project_json::serialize_crate_name
+
+
+=========================================
+CRATE: query-group-macro
+=========================================
+
+
+Highest FAN-OUT:
+  2 dependencies	 -> query_group_macro::query_group_impl
+  1 dependencies	 -> query_group_macro
+  1 dependencies	 -> query_group_macro::queries
+
+Lowest FAN-OUT:
+  1 dependencies	 -> query_group_macro
+  1 dependencies	 -> query_group_macro::queries
+  2 dependencies	 -> query_group_macro::query_group_impl
+
+Highest FAN-IN:
+  2 times		 -> query_group_macro::queries
+  2 times		 -> query_group_macro
+  0 times		 -> query_group_macro::query_group_impl
+
+Lowest FAN-IN:
+  0 times		 -> query_group_macro::query_group_impl
+  2 times		 -> query_group_macro::queries
+  2 times		 -> query_group_macro
+
+
+=========================================
+CRATE: rust-analyzer
+=========================================
+
+
+Highest FAN-OUT:
+  59 dependencies	 -> rust_analyzer::cli::flags
+  44 dependencies	 -> rust_analyzer::cli::analysis_stats
+  42 dependencies	 -> rust_analyzer::global_state
+  34 dependencies	 -> rust_analyzer::config
+  33 dependencies	 -> rust_analyzer::lsp::to_proto
+
+Lowest FAN-OUT:
+  0 dependencies	 -> rust_analyzer::lsp::ext
+  0 dependencies	 -> edition
+  0 dependencies	 -> hir
+  0 dependencies	 -> hir_expand::name
+  0 dependencies	 -> hir_ty::db
+
+Highest FAN-IN:
+  125 times		 -> rust_analyzer::global_state
+  112 times		 -> vfs
+  78 times		 -> ide
+  76 times		 -> rust_analyzer::config
+  75 times		 -> rust_analyzer::line_index
+
+Lowest FAN-IN:
+  0 times		 -> rust_analyzer
+  0 times		 -> rust_analyzer::cli::analysis_stats::expr_syntax_range
+  0 times		 -> rust_analyzer::cli::analysis_stats::full_name
+  0 times		 -> rust_analyzer::cli::analysis_stats::location_csv_expr
+  0 times		 -> rust_analyzer::cli::analysis_stats::location_csv_pat
+
+
+=========================================
+CRATE: span
+=========================================
+
+
+Highest FAN-OUT:
+  6 dependencies	 -> span::ast_id
+  5 dependencies	 -> span
+  4 dependencies	 -> span::ast_id::asm_expr_ast_id
+  4 dependencies	 -> span::ast_id::block_expr_ast_id
+  4 dependencies	 -> span::ast_id::extern_block_ast_id
+
+Lowest FAN-OUT:
+  0 dependencies	 -> edition
+  0 dependencies	 -> vfs
+  0 dependencies	 -> parser::syntax_kind::generated
+  0 dependencies	 -> syntax::ast
+  0 dependencies	 -> syntax::ast::traits
+
+Highest FAN-IN:
+  12 times		 -> span::ast_id
+  10 times		 -> syntax::ast::generated::nodes
+  9 times		 -> syntax::syntax_node
+  7 times		 -> parser::syntax_kind::generated
+  3 times		 -> edition
+
+Lowest FAN-IN:
+  0 times		 -> span::ast_id::asm_expr_ast_id
+  0 times		 -> span::ast_id::assoc_item_ast_id
+  0 times		 -> span::ast_id::block_expr_ast_id
+  0 times		 -> span::ast_id::extern_block_ast_id
+  0 times		 -> span::ast_id::has_name_ast_id
+
+
+=========================================
+CRATE: stdx
+=========================================
+
+
+Highest FAN-OUT:
+  2 dependencies	 -> stdx::thread
+  2 dependencies	 -> stdx::thread::intent::imp::thread_intent_to_qos_class
+  2 dependencies	 -> stdx::thread::intent::thread_intent_to_qos_class
+  2 dependencies	 -> stdx::thread::pool
+  2 dependencies	 -> stdx::thread::spawn
+
+Lowest FAN-OUT:
+  0 dependencies	 -> stdx
+  0 dependencies	 -> stdx::panic_context
+  0 dependencies	 -> stdx::thread::intent::imp
+  1 dependencies	 -> stdx::defer
+  1 dependencies	 -> stdx::panic_context::enter
+
+Highest FAN-IN:
+  5 times		 -> stdx::thread::intent
+  5 times		 -> stdx::thread::intent::imp
+  3 times		 -> stdx
+  2 times		 -> stdx::thread
+  1 times		 -> stdx::panic_context
+
+Lowest FAN-IN:
+  0 times		 -> stdx::defer
+  0 times		 -> stdx::panic_context::enter
+  0 times		 -> stdx::process
+  0 times		 -> stdx::process::spawn_with_streaming_output
+  0 times		 -> stdx::thread::intent::imp::set_current_thread_qos_class
+
+
+=========================================
+CRATE: syntax
+=========================================
+
+
+Highest FAN-OUT:
+  154 dependencies	 -> syntax::ast::make::ext
+  17 dependencies	 -> syntax::ast::generated::nodes
+  12 dependencies	 -> syntax::ast
+  10 dependencies	 -> syntax::ast::edit
+  10 dependencies	 -> syntax::ast::edit_in_place
+
+Lowest FAN-OUT:
+  0 dependencies	 -> edition
+  0 dependencies	 -> parser::syntax_kind::generated
+  0 dependencies	 -> syntax::syntax_error
+  0 dependencies	 -> syntax::token_text
+  0 dependencies	 -> syntax::ast::operators
+
+Highest FAN-IN:
+  207 times		 -> syntax::ast::generated::nodes
+  120 times		 -> syntax::syntax_node
+  67 times		 -> parser::syntax_kind::generated
+  32 times		 -> syntax::ast
+  25 times		 -> edition
+
+Lowest FAN-IN:
+  0 times		 -> syntax::algo::ancestors_at_offset
+  0 times		 -> syntax::algo::find_node_at_offset
+  0 times		 -> syntax::algo::find_node_at_range
+  0 times		 -> syntax::algo::has_errors
+  0 times		 -> syntax::algo::least_common_ancestor
+
+
+=========================================
+CRATE: syntax-bridge
+=========================================
+
+
+Highest FAN-OUT:
+  30 dependencies	 -> syntax_bridge::dummy_test_span_utils
+  17 dependencies	 -> syntax_bridge
+  11 dependencies	 -> syntax_bridge::token_tree_to_syntax_node
+  9 dependencies	 -> syntax_bridge::convert_doc_comment
+  8 dependencies	 -> syntax_bridge::to_parser_input::to_parser_input
+
+Lowest FAN-OUT:
+  0 dependencies	 -> edition
+  0 dependencies	 -> intern::symbol
+  0 dependencies	 -> parser
+  0 dependencies	 -> parser::lexed_str
+  0 dependencies	 -> parser::syntax_kind::generated
+
+Highest FAN-IN:
+  11 times		 -> parser::syntax_kind::generated
+  10 times		 -> span
+  8 times		 -> syntax::syntax_node
+  8 times		 -> tt
+  8 times		 -> tt::storage
+
+Lowest FAN-IN:
+  0 times		 -> syntax_bridge::dummy_test_span_utils
+  0 times		 -> syntax_bridge::map
+  0 times		 -> syntax_bridge::prettify_macro_expansion::is_text
+  0 times		 -> syntax_bridge::prettify_macro_expansion::prettify_macro_expansion
+  1 times		 -> syntax::ast::generated::tokens
+
+
+=========================================
+CRATE: test-fixture
+=========================================
+
+
+Highest FAN-OUT:
+  25 dependencies	 -> test_fixture
+  3 dependencies	 -> test_fixture::default_test_proc_macros
+  3 dependencies	 -> test_fixture::parse_crate
+  1 dependencies	 -> test_fixture::parse_target_arch
+  0 dependencies	 -> base_db
+
+Lowest FAN-OUT:
+  0 dependencies	 -> base_db
+  0 dependencies	 -> base_db::all_crates
+  0 dependencies	 -> base_db::change
+  0 dependencies	 -> base_db::editioned_file_id
+  0 dependencies	 -> base_db::input
+
+Highest FAN-IN:
+  3 times		 -> intern::symbol
+  2 times		 -> base_db::input
+  2 times		 -> base_db::target
+  2 times		 -> hir_expand::proc_macro
+  2 times		 -> test_fixture
+
+Lowest FAN-IN:
+  0 times		 -> test_fixture::default_test_proc_macros
+  0 times		 -> test_fixture::parse_crate
+  0 times		 -> test_fixture::parse_target_arch
+  1 times		 -> base_db
+  1 times		 -> base_db::all_crates
+
+
+=========================================
+CRATE: test-utils
+=========================================
+
+
+Highest FAN-OUT:
+  4 dependencies	 -> test_utils
+  2 dependencies	 -> test_utils::bench
+  1 dependencies	 -> test_utils::bench_fixture
+  1 dependencies	 -> test_utils::extract_annotations
+  1 dependencies	 -> test_utils::extract_line_annotations
+
+Lowest FAN-OUT:
+  0 dependencies	 -> profile::stop_watch
+  0 dependencies	 -> stdx::is_ci
+  0 dependencies	 -> test_utils::assert_linear
+  0 dependencies	 -> test_utils::project_root
+  0 dependencies	 -> stdx::trim_indent
+
+Highest FAN-IN:
+  4 times		 -> test_utils
+  2 times		 -> profile::stop_watch
+  1 times		 -> stdx::is_ci
+  1 times		 -> test_utils::assert_linear
+  1 times		 -> test_utils::fixture
+
+Lowest FAN-IN:
+  0 times		 -> test_utils::bench
+  0 times		 -> test_utils::bench_fixture
+  0 times		 -> test_utils::extract_annotations
+  0 times		 -> test_utils::extract_line_annotations
+  0 times		 -> test_utils::extract_range_or_offset
+
+
+=========================================
+CRATE: toolchain
+=========================================
+
+
+Highest FAN-OUT:
+
+Lowest FAN-OUT:
+
+Highest FAN-IN:
+
+Lowest FAN-IN:
+
+
+=========================================
+CRATE: tt
+=========================================
+
+
+Highest FAN-OUT:
+  5 dependencies	 -> tt
+  5 dependencies	 -> tt::iter
+  5 dependencies	 -> tt::storage
+  3 dependencies	 -> tt::print_debug_subtree
+  2 dependencies	 -> tt::buffer
+
+Lowest FAN-OUT:
+  0 dependencies	 -> intern::symbol
+  0 dependencies	 -> span
+  0 dependencies	 -> intern::symbol::symbols
+  0 dependencies	 -> span::hygiene
+  2 dependencies	 -> tt::buffer
+
+Highest FAN-IN:
+  8 times		 -> tt
+  5 times		 -> span
+  5 times		 -> tt::storage
+  4 times		 -> tt::iter
+  3 times		 -> intern::symbol
+
+Lowest FAN-IN:
+  0 times		 -> tt::pretty
+  0 times		 -> tt::print_debug_subtree
+  0 times		 -> tt::print_debug_token
+  0 times		 -> tt::token_to_literal
+  0 times		 -> tt::transform_tt
+
+
+=========================================
+CRATE: vfs
+=========================================
+
+
+Highest FAN-OUT:
+  5 dependencies	 -> vfs
+  3 dependencies	 -> vfs::file_set
+  2 dependencies	 -> vfs::loader::dirs
+  2 dependencies	 -> vfs::path_interner
+  1 dependencies	 -> vfs::anchored_path
+
+Lowest FAN-OUT:
+  0 dependencies	 -> paths
+  0 dependencies	 -> stdx::hash_once
+  1 dependencies	 -> vfs::anchored_path
+  1 dependencies	 -> vfs::loader
+  1 dependencies	 -> vfs::vfs_path
+
+Highest FAN-IN:
+  4 times		 -> paths
+  3 times		 -> vfs::vfs_path
+  3 times		 -> vfs
+  2 times		 -> vfs::anchored_path
+  1 times		 -> stdx::hash_once
+
+Lowest FAN-IN:
+  0 times		 -> vfs::file_set
+  0 times		 -> vfs::loader::dirs
+  1 times		 -> stdx::hash_once
+  1 times		 -> vfs::path_interner
+  1 times		 -> vfs::loader
+
+
+=========================================
+CRATE: vfs-notify
+=========================================
+
+
+Highest FAN-OUT:
+  4 dependencies	 -> vfs_notify
+  1 dependencies	 -> vfs_notify::read
+  0 dependencies	 -> paths
+  0 dependencies	 -> vfs::loader
+  0 dependencies	 -> stdx::thread
+
+Lowest FAN-OUT:
+  0 dependencies	 -> paths
+  0 dependencies	 -> vfs::loader
+  0 dependencies	 -> stdx::thread
+  0 dependencies	 -> stdx::thread::intent
+  1 dependencies	 -> vfs_notify::read
+
+Highest FAN-IN:
+  2 times		 -> paths
+  1 times		 -> vfs::loader
+  1 times		 -> stdx::thread
+  1 times		 -> stdx::thread::intent
+  0 times		 -> vfs_notify
+
+Lowest FAN-IN:
+  0 times		 -> vfs_notify
+  0 times		 -> vfs_notify::read
+  1 times		 -> vfs::loader
+  1 times		 -> stdx::thread
+  1 times		 -> stdx::thread::intent
+
