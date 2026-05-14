@@ -1,3 +1,5 @@
+# Software design report
+
 ## Code Dependencies
 
 ### Methodology and Tools
@@ -20,14 +22,32 @@ Following this visual design, we intentionally focused our analytical efforts on
 
 We evaluated the architectural coupling using standard metrics: **Fan-Out** and **Fan-In**. The top 5 results for each category across the entire workspace are detailed below:
 
-| Metric | Component Path | Score |
-| :--- | :--- | :--- |
-| **Highest Fan-Out**<br>*(Most Dependent)* | `syntax::ast::make::ext`<br>`hir` *(root / lib.rs)*<br>`ide` *(root / lib.rs)*<br>`hir_ty::infer`<br>`hir::semantics` | 154 dependencies<br>119 dependencies<br>74 dependencies<br>71 dependencies<br>67 dependencies |
-| **Lowest Fan-Out**<br>*(Most Independent)* | `edition`<br>`syntax::syntax_error`<br>`base_db::all_crates`<br>`base_db::set_all_crates_with_durability`<br>`intern::symbol` | 0 dependencies<br>0 dependencies<br>0 dependencies<br>0 dependencies<br>0 dependencies |
-| **Highest Fan-In**<br>*(System Core)* | `syntax::ast::generated::nodes`<br>`syntax::syntax_node`<br>`ide_db` *(root / lib.rs)*<br>`parser::syntax_kind::generated`<br>`hir::semantics` | 1367 times<br>1121 times<br>889 times<br>670 times<br>643 times |
-| **Lowest Fan-In**<br>*(Rarely Imported)* | `base_db::change::file_text_durability`<br>`base_db::change::source_root_durability`<br>`cfg::cfg_expr::next_cfg_expr`<br>`cfg::dnf::distribute_conj`<br>`cfg::dnf::flatten` | 0 times<br>0 times<br>0 times<br>0 times<br>0 times |
+![architectural metrics](../diagrams/design/architectural_metrics.png "Architectural Metrics")
 
 *(For more details, refer to: [Crate-Level Dependency Report](../../res/crate-level-dependencies.txt) and [Global System Dependency Report](../../res/global-dependencies.txt)).*
+
+## Coupling
+
+### Hotspots
+
+To get the **most frequently changed points**, the git repository must be analyzed; [code-maat](https://github.com/adamtornhill/code-maat) is a tool which can be used to analyze the history of git repository. Based on reports from code-maat, here is the top 50 most frequently changed files and crates(a single compiled unit of Rust code, either a library or an executable) and the [complete results](../diagrams/design/file_revisions.csv) is also available
+![hotspots](../diagrams/design/file_crates_hotspots.png "Hotspots")
+
+### Temporal Coupling
+
+Getting the group of files **changed together** is feasible by checking the commits history from git repository; code-maat analyzes the history or repository and gives all pair of files changed together in same commit.
+The output must be filtered in order to take desired file types into consideration. At the end of the process, there will be a list of pairs of files changed together with the number of revision and the degree
+
+The output from previous step can be checked whether the temporal coupling is due to code dependency or not; [rust-analyzer](https://github.com/rust-lang/rust-analyzer) is an implementation of language server protocol for Rust programming language therefore it can be used to analyze its own code base and check dependency between files. It can check code dependency between files from the output of coad-maat temporal coupling analyze.
+Here is the summary of output and the [complete result](../diagrams/design/structural_coupling_results.csv) is also available
+
+#### Temporal Coupling WITH Code Dependency (Structurally Coupled)
+
+![temporal coupling with code dependency](../diagrams/design/temporal_coupling_with_code_dependency.png "Temporal Coupling WITH Code Dependency")
+
+#### Temporal Coupling WITHOUT Code Dependency
+
+![temporal coupling without code dependency](../diagrams/design/temporal_coupling_without_code_dependency.png "Temporal Coupling WITHOUT Code Dependency")
 
 ## GoF Design Patterns
 
