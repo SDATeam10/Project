@@ -470,3 +470,210 @@ Cons:
 - Harder to keep the parser simple.
 
 ---
+
+# 4. Strategy - Behavioral
+
+**Strategy** means choosing one algorithm from several possible algorithms.
+
+```mermaid
+flowchart LR
+    Client["syntax layer<br/>parse_text"]
+    Selector["TopEntryPoint<br/>Strategy selector"]
+    SourceFile["SourceFile strategy<br/>parse whole file"]
+    Expr["Expr strategy<br/>parse expression"]
+    Type["Type strategy<br/>parse type"]
+    Pattern["Pattern strategy<br/>parse pattern"]
+    Parser["Common parser pipeline"]
+    Output["parser::Output"]
+    Tree["syntax tree"]
+
+    Client --> Selector
+    Selector --> SourceFile
+    Selector --> Expr
+    Selector --> Type
+    Selector --> Pattern
+
+    SourceFile --> Parser
+    Expr --> Parser
+    Type --> Parser
+    Pattern --> Parser
+
+    Parser --> Output --> Tree
+
+    classDef strategy fill:#f8d66d,stroke:#9a6b00,color:#222;
+    classDef common fill:#dff5dd,stroke:#317a35,color:#111;
+
+    class Selector,SourceFile,Expr,Type,Pattern strategy;
+    class Parser,Output,Tree common;
+```
+
+```text
+The parser applies different parsing strategies based on whether it is parsing a complete Rust file, an expression, a type, or a pattern.
+```
+
+## Location
+
+Important files and names:
+
+- `crates/syntax/src/parsing.rs`
+  - `parse_text`
+- `crates/parser/src/lib.rs`
+  - `TopEntryPoint`
+  - `TopEntryPoint::parse`
+- parser grammar functions selected by `TopEntryPoint::parse`
+  - `grammar::entry::top::source_file`
+  - `grammar::entry::top::expr`
+  - `grammar::entry::top::type_`
+  - `grammar::entry::top::pattern`
+  - `grammar::entry::top::macro_items`
+
+## Execution Trace And Proof
+
+For **Go to Definition**:
+
+1. The editor asks rust-analyzer:
+
+  ```text
+  Go to the definition of the symbol at this file position.
+  ```
+
+2. The request reaches the LSP handler:
+
+  ```text
+  crates/rust-analyzer/src/handlers/request.rs
+  handle_goto_definition
+  ```
+
+3. The handler converts the editor position into rust-analyzer's internal
+  position format.
+
+4. Then the handler calls:
+
+  ```text
+  snap.analysis.goto_definition(position, &config)
+  ```
+
+5. That enters the `ide` crate:
+
+  ```text
+  crates/ide/src/lib.rs
+  Analysis::goto_definition
+  ```
+
+6. `Analysis::goto_definition` calls the real go-to-definition feature code:
+
+  ```text
+  crates/ide/src/goto_definition.rs
+  goto_definition(...)
+  ```
+
+7. That feature needs to understand the file's syntax, so it uses:
+
+  ```text
+  hir::Semantics
+  ```
+
+8. Then it parses the current file using:
+
+  ```text
+  sema.parse_guess_edition(file_id)
+  ```
+
+9. Inside `parse_guess_edition`, rust-analyzer asks the file to parse itself.
+  That leads to:
+
+  ```text
+  SourceFile::parse
+  ```
+10. `SourceFile::parse` calls:
+
+  ```text
+  syntax::parsing::parse_text
+  ```
+
+11. `parse_text` chooses the full-file parser strategy:
+
+  ```text
+  TopEntryPoint::SourceFile
+  ```
+
+12. Then it calls:
+
+  ```text
+  TopEntryPoint::SourceFile.parse(...)
+  ```
+
+13. Inside `TopEntryPoint::parse`, the strategy selection happens. The code
+  checks which `TopEntryPoint` value it received and chooses the matching
+  grammar function:
+
+  ```text
+  SourceFile -> grammar::entry::top::source_file
+  Expr       -> grammar::entry::top::expr
+  Type       -> grammar::entry::top::type_
+  Pattern    -> grammar::entry::top::pattern
+  ```
+
+14. In this Go-to-Definition trace, the selected strategy is:
+
+  ```text
+  grammar::entry::top::source_file
+  ```
+
+15. After choosing that function, the rest of the parser pipeline is the same:
+
+  ```text
+  create Parser
+  run selected grammar function
+  finish parser
+  produce parser Output
+  build syntax tree
+  ```
+
+This proves Strategy because `TopEntryPoint::parse` has several possible
+parsing algorithms available, and it selects one grammar function based on the
+chosen `TopEntryPoint` value.
+
+## Role Mapping
+
+- **Context:** `TopEntryPoint::parse`.
+- **Strategy selector:** the `TopEntryPoint` enum.
+- **Concrete strategies:**
+  - `grammar::entry::top::source_file`
+  - `grammar::entry::top::expr`
+  - `grammar::entry::top::type_`
+  - `grammar::entry::top::pattern`
+  - `grammar::entry::top::macro_items`
+- **Common input:** `parser::Input`.
+- **Common output:** `parser::Output`.
+- **Client:** `syntax::parsing::parse_text`.
+
+## Problem Solved And Alternatives
+
+Why this is useful:
+
+- rust-analyzer can reuse one parser framework for many parsing jobs.
+- Parsing a full file, an expression, a type, or a pattern follows the same outer process.
+- Only the selected grammar function changes.
+- This keeps parsing code organized.
+
+Alternative:
+
+```text
+Write totally separate parser pipelines:
+
+parse_full_file(...)
+parse_expression(...)
+parse_type(...)
+parse_pattern(...)
+```
+
+Pros:
+
+- Each function may look simple by itself.
+
+Cons:
+
+- Much more duplicated parser setup code.
+- Harder to guarantee all parser modes behave consistently.
+- Harder to add a new parsing mode later.
