@@ -118,13 +118,15 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
         <figcaption><em>Figure 3.2: Component diagram</em></figcaption>
 </figure>
 
-Something that is crucial we keep in mind is that Rust is not a classic OOP language.
+### SOLID Principles
+
+When analysing rust-analyzer under SOLID's design philosophy, it's crucial to keep in mind is that Rust is not a classic OOP language.
 Solid principles were originally formulated in a very different context, and it's main subject of study were languages heavily based on inheritance and subtype polymorphism.
 
 Rust follows a different design philosophy as it favours composition, algebraic data types, and trait-based abstractions over classical inheritance.
 Because of this, some SOLID principles aren't directly applicable, and are often reinterpreted through traits, modular boundaries, and composition patterns. 
 
-However, an analysis of rust-analyzer through a SOLID principles lens can still be insightful.
+However, an analysis of rust-analyzer through these lenses can still be insightful.
 
 Generally the SRP principle is followed throughout the project. 
 The majority of modules have a clear intent and focus.
@@ -145,7 +147,7 @@ LSP is less directly applicable in rust, since rust doesn't have classic subtype
 
 Finally, the ISP principle can be found in different aspects, like the decision to split the database in two separate interfaces (`SourceDatabase` and `SourceDatabaseExt`) to hide information where not relevant. Many of the components mentioned in the SRP section elicit an ISP friendly behaviour, as the interface they provide is relatively narrow.
 Additionally, given rust's traits, the language itself encourages writing small interfaces that can be combined to achieve more complex behaviour. 
-Due to the design, top level API boundary components inevitably end up providing quite fat API, though I wouldn't call this an error on rust-analyzer's team part.
+Due to the design, top level API boundary components inevitably end up providing quite fat API, though it's difficult to consider this fact an error on rust-analyzer's team part, given the advantages a clear API boundary provides.
 
 ***
 
