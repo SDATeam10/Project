@@ -13,7 +13,7 @@
 -->
 
 ## Introduction
-Rust Analyzer is structured using a **compiler-as-a-library** architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to note that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
+rust-analyzer is structured using a **compiler-as-a-library** architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to note that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
 
 <!--
 Note from Marco Oliviero:
@@ -26,16 +26,16 @@ Cfr:
     link: https://deepwiki.com/rust-lang/rust-analyzer/2.1-crate-structure-and-dependencies
 -->
 
-In this analysis we focused our attention on what is probably the most common use case for Rust Analyzer: a user interacting with Rust Analyzer through an IDE to obtain language tooling features (such as code completion, type checking, error checking, goto-definitions, … ).
+In this analysis we focused our attention on what is probably the most common use case for rust-analyzer: a user interacting with rust-analyzer through an IDE to obtain language tooling features (such as code completion, type checking, error checking, goto-definitions, … ).
 
-To support this highly interactive environment, Rust Analyzer relies on a loosely layered architecture where each internal layer exposes a clear API boundary and builds on top of lower-level abstractions. This decoupling allows the system to utilize internal components in isolation. By combining these modular pieces, the architecture successfully achieves the fast, incremental computation required for responsive IDE features.
+To support this highly interactive environment, rust-analyzer relies on a loosely layered architecture where each internal layer exposes a clear API boundary and builds on top of lower-level abstractions. This decoupling allows the system to utilize internal components in isolation. By combining these modular pieces, the architecture successfully achieves the fast, incremental computation required for responsive IDE features.
 
 ## Context level
 <!--
 - Context level: diagram and explanations
 -->
 
-As mentioned in the introduction, Rust Analyzer's core workflow consists of a user asking its IDE for some language tooling feature. The IDE then forwards this request to Rust Analyzer using the LSP protocol.
+As mentioned in the introduction, rust-analyzer's core workflow consists of a user asking its IDE for some language tooling feature. The IDE then forwards this request to rust-analyzer using the LSP protocol.
 
 
 <figure>
@@ -63,9 +63,9 @@ As mentioned in the introduction, Rust Analyzer's core workflow consists of a us
 Salsa apparently shouldn't be considered a container, as it's not a database running as a separate process, but rather a logical component that implements incremental persistance.
 -->
 
-At the container level Rust Analyzer's layered architecture is not yet visible, though some of the most important entities start to emerge.
+At the container level rust-analyzer's layered architecture is not yet visible, though some of the most important entities start to emerge.
 
-The external IDE interacts directly with the language server exposed by Rust Analyzer's single deployed container.
+The external IDE interacts directly with the language server exposed by rust-analyzer's single deployed container.
 
 <figure>
     <center>
@@ -80,10 +80,10 @@ The external IDE interacts directly with the language server exposed by Rust Ana
 
 
 Though omitted in the diagram, as it doesn't concern the runtime system, at development/installation time, another container becomes relevant:
-`xtask` is Rust Analyzer's custom build tool; it is able to produce different types of Rust Analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
+`xtask` is rust-analyzer's custom build tool; it is able to produce different types of rust-analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
 
-As Rust Analyzer is a single deployable unit, the clean architecture blueprint is not yet clearly visible at this level of abstraction.
-Rust Analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become evident in the next section.
+As rust-analyzer is a single deployable unit, the clean architecture blueprint is not yet clearly visible at this level of abstraction.
+rust-analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become evident in the next section.
 
 ***
 
@@ -93,7 +93,7 @@ Rust Analyzer's designers were clearly aware of "clean code" and "clean architec
     * Did you observe any violation of SOLID principles at level 3 ?
 -->
 
-At a high level, Rust Analyzer is structured in a loosely layered way, as shown in the figure 3.1.
+At a high level, rust-analyzer is structured in a loosely layered way, as shown in the figure 3.1.
 The analysis starts when the client requests some type of analysis through the LSP protocol.
 The LSP layer than forwards this request to the `IDE` layer. 
 Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
@@ -118,6 +118,35 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
         <figcaption><em>Figure 3.2: Component diagram</em></figcaption>
 </figure>
 
+Something that is crucial we keep in mind is that Rust is not a classic OOP language.
+Solid principles were originally formulated in a very different context, and it's main subject of study were languages heavily based on inheritance and subtype polymorphism.
+
+Rust follows a different design philosophy as it favours composition, algebraic data types, and trait-based abstractions over classical inheritance.
+Because of this, some SOLID principles aren't directly applicable, and are often reinterpreted through traits, modular boundaries, and composition patterns. 
+
+However, an analysis of rust-analyzer through a SOLID principles lens can still be insightful.
+
+Generally the SRP principle is followed throughout the project. 
+The majority of modules have a clear intent and focus.
+For example, many concepts are intentionally separated, such as `AnalysisHost` vs `Analysis` (state mutation vs immutable state snapshot), `vfs` vs `vfs_notify` (current state tracking vs I/O and file system watching) and `parser` vs `syntax` (grammar vs typed CST/AST wrapper).
+
+Given the modularity of the system, the OCP is mostly followed as well. For example, the most likely sources of changes (the language itself, and the LSP protocol, as highlighted in the [./Design.md](design) document) have been clearly separated into their own section with their own modules. This helps prevent common sources of change from affecting more stable parts of the system (such as the infrastructure). 
+Additionally, its query-based architecture (via Salsa) allows for new IDE features to be added by introducing new queries rather than modifying existing computation logic.
+However, it is not strictly followed in all layers, since core structures (e.g., `CrateGraph`, `AnalysisHost`, or syntax abstractions) require intervention when the language or performance requirements evolve, thus reducing the ease of extendibility.
+
+DIP is followed at the boundary layer, with all components referencing the top level APIs defined by other components.
+This is evident in components such as `vfs` and the Salsa-based database layer, where higher-level IDE logic operates over `FileId` and virtual file abstractions. Actual file system I/O operations are delegated to `loader.rs` which defines abstraction traits for file loading and watching. The concrete implementations are provided by `vfs_notify` instead. This enables higher-level logic to remain independent of platform-specific I/O concerns.
+Additionally, incremental computation is expressed through abstract query traits rather than concrete data manipulation.
+
+> *Note*
+> In rust, abstraction is often achieved through generics and traits rather than runtime polymorphism. As a result, components frequently depend on trait-constrained types using static dispatch (`impl Trait` or generics), instead of storing trait objects (`dyn Trait`) as is common in classical OOP languages like Java.
+
+LSP is less directly applicable in rust, since rust doesn't have classic subtype hierarchies, unlike OOP languages. In practice, rust-analyzer’s small, focused traits and explicit module boundaries make substitutability issues relatively uncommon. And we couldn't find any concrete example of a violation of this principle.
+
+Finally, the ISP principle can be found in different aspects, like the decision to split the database in two separate interfaces (`SourceDatabase` and `SourceDatabaseExt`) to hide information where not relevant. Many of the components mentioned in the SRP section elicit an ISP friendly behaviour, as the interface they provide is relatively narrow.
+Additionally, given rust's traits, the language itself encourages writing small interfaces that can be combined to achieve more complex behaviour. 
+Due to the design, top level API boundary components inevitably end up providing quite fat API, though I wouldn't call this an error on rust-analyzer's team part.
+
 ***
 
 ## Architectural characteristics
@@ -127,20 +156,20 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
 -->
 
 ### Robustness and Fault Tolerance
-In an IDE the code is most of the time broken. Due to that, the architecture must treat broken code as the normal state, without generating failures, and this is an important feature of Rust Analyzer architecture, having resistence to uncomplete or malformed inputs and internal failures. This is reached by these principles:
+In an IDE the code is most of the time broken. Due to that, the architecture must treat broken code as the normal state, without generating failures, and this is an important feature of rust-analyzer architecture, having resistence to uncomplete or malformed inputs and internal failures. This is reached by these principles:
 
 * **Non-destructive parsing**: `syntax` crate guarantees that parsing never fails, indeed it returns `(Tree, Vec<Error>)` instead of `Result<T, Error>`. This ensures that the AST is always generated, even with error nodes, allowing the semantic layer to provide features like *code completion*.
 * **Graceful cancellation**: when a user types a new character, any background process which is analyzing the old code must be stopped. This is done by the `salsa` database, which bumps a revision counter, causing background threads to panic. The outer LSP boundary catches these panics using `catch_unwind` and transforms them into graceful cancellation responses for the IDE, preventing the system from crashing while freeing up CPU resources immediately.
-* **Process isolation for external code**: Rust heavily utilizes Procedural Macros, which execute custom, third-party code during compilation. Because poorly written macros can infinite-loop or panic, Rust Analyzer delegates macro expansion to an entirely separate OS process (`proc-macro-srv`). This creates a strict fault-isolation boundary: if a macro crashes, only the child process dies, while the main language server remains responsive.
+* **Process isolation for external code**: Rust heavily utilizes Procedural Macros, which execute custom, third-party code during compilation. Because poorly written macros can infinite-loop or panic, rust-analyzer delegates macro expansion to an entirely separate OS process (`proc-macro-srv`). This creates a strict fault-isolation boundary: if a macro crashes, only the child process dies, while the main language server remains responsive.
 
 ### Portability and Determinism
-Rust Analyzer uses a virtual file system to abstract away how files are actually stored in the file system.
+rust-analyzer uses a virtual file system to abstract away how files are actually stored in the file system.
 This is done for several reasons:
-1. Rust Analyzer, to avoid occupying too much memory, has to be able to create derived data, forget about it and then recompute it again. Rust Analyzer is therefore mostly concerned with storing stable, versioned snapshots of file contents, so that the analysis can be incremental and deterministic. 
-2. Rust Analyzer wants to be *platform-agnostic*, it should be able to work regardless of the underlying file system used by the OS. The VFS helps decouple the internal representation of files from how the OS keeps track of them. Only specific submodules (`loader`) know actual OS paths.
-3. On a similar vein, Rust Analyzer would also like to be able to support Multi-file system works (for example, projects written on a Windows machine, but analyzed on a separate Linux server).
+1. rust-analyzer, to avoid occupying too much memory, has to be able to create derived data, forget about it and then recompute it again. rust-analyzer is therefore mostly concerned with storing stable, versioned snapshots of file contents, so that the analysis can be incremental and deterministic. 
+2. rust-analyzer wants to be *platform-agnostic*, it should be able to work regardless of the underlying file system used by the OS. The VFS helps decouple the internal representation of files from how the OS keeps track of them. Only specific submodules (`loader`) know actual OS paths.
+3. On a similar vein, rust-analyzer would also like to be able to support Multi-file system works (for example, projects written on a Windows machine, but analyzed on a separate Linux server).
 
-For Rust Analyzer is much simpler to create an internal representation of files as text snapshots indexed by an ID, removing direct dependence on OS paths and file system semantics. To achieve this, stored files aren't identified by their paths, but through a field called `FileId`. 
+For rust-analyzer is much simpler to create an internal representation of files as text snapshots indexed by an ID, removing direct dependence on OS paths and file system semantics. To achieve this, stored files aren't identified by their paths, but through a field called `FileId`. 
  
 Using IDs to identify files has another important consequence: it makes it very hard to go from a `FileId` to an actual file on the OS file system.
 This makes it easier to avoid mistakes where a developer accidentally reads a file directly and causes problems.
@@ -153,7 +182,7 @@ This trend is visible throughout this whole component, file system specific info
 >
 > It's instead `loader.rs` job to perform the actual read of the file. It is both able to read files and detect when they have been changed (and emit the associated events). The 'watching' functionality is a non-trivial issue to solve, as most raw OS APIs don't offer a reliable mechanism to detect changes. The crate `vfs_notify` is an implementation of `loader::Handle` and implements the file watching function.
 >
-> The file watching bits here are untested and quite probably buggy. For this reason, by default Rust Analyzer doesn't watch files and relies on editor’s file watching capabilities instead.
+> The file watching bits here are untested and quite probably buggy. For this reason, by default rust-analyzer doesn't watch files and relies on editor’s file watching capabilities instead.
 -->
 
 `FileSet` is a special module that allows VFS to be split into "chunks" that roughly correspond to single crate. This is quite useful because it allows to prevent the propagation of changes across the whole VFS, thus help limit recomputation by grouping related files.
