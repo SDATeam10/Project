@@ -654,11 +654,9 @@ Why this is useful:
 - Only the selected grammar function changes.
 - This keeps parsing code organized.
 
-Alternative:
+Alternative: Write totally separate parser pipelines.
 
-```text
-Write totally separate parser pipelines:
-
+```rust
 parse_full_file(...)
 parse_expression(...)
 parse_type(...)
