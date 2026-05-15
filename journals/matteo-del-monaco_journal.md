@@ -138,3 +138,5 @@
     - `img/diagrams/architecture/system-context.png` : +0/-0
     - `src/diagrams/architecture/container.puml` : +3/-2
     - `src/diagrams/architecture/system-context.puml` : +1/-1
+- **12:36:29 — fix: minor edits**
+    - `src/deliverables/Architecture.md` : +5/-3
