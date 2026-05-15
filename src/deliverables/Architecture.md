@@ -132,7 +132,7 @@ Generally the SRP principle is followed throughout the project.
 The majority of modules have a clear intent and focus.
 For example, many concepts are intentionally separated, such as `AnalysisHost` vs `Analysis` (state mutation vs immutable state snapshot), `vfs` vs `vfs_notify` (current state tracking vs I/O and file system watching) and `parser` vs `syntax` (grammar vs typed CST/AST wrapper).
 
-Given the modularity of the system, the OCP is mostly followed as well. For example, the most likely sources of changes (the language itself, and the LSP protocol, as highlighted in the [./Design.md](design) document) have been clearly separated into their own section with their own modules. This helps prevent common sources of change from affecting more stable parts of the system (such as the infrastructure). 
+Given the modularity of the system, the OCP is mostly followed as well. For example, the most likely sources of changes (the language itself, and the LSP protocol, as highlighted in the [design](./Design.md) document) have been clearly separated into their own section with their own modules. This helps prevent common sources of change from affecting more stable parts of the system (such as the infrastructure). 
 Additionally, its query-based architecture (via Salsa) allows for new IDE features to be added by introducing new queries rather than modifying existing computation logic.
 However, it is not strictly followed in all layers, since core structures (e.g., `CrateGraph`, `AnalysisHost`, or syntax abstractions) require intervention when the language or performance requirements evolve, thus reducing the ease of extendibility.
 
