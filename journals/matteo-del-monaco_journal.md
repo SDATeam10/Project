@@ -144,3 +144,6 @@
     - `src/deliverables/Architecture.md` : +1/-1
 - **12:39:19 — fix: broken design link**
     - `src/deliverables/Architecture.md` : +1/-1
+- **17:12:34 — feat: recompiled plantuml source to regenarate .png**
+    - `img/diagrams/architecture/container.png` : +0/-0
+    - `img/diagrams/architecture/system-context.png` : +0/-0
