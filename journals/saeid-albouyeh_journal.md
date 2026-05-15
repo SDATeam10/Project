@@ -73,3 +73,27 @@ According to the project specifications from the slides, the information present
 
 ### Report
 File revision frequencies were extracted using code-maat and visualized into graphs to identify architectural hotspots and the most active crates in the project. The temporal coupling of the project was also analyzed by generating a CSV file using code-maat from the Git history. To evaluate structural dependencies, the SCIP index of the codebase was generated natively using rust-analyzer. A Python script utilizing the Protobuf library was then used to parse the binary index and cross-reference the structural dependencies with the temporal coupling data. The final results were compiled into a new CSV file, which successfully categorized file pairs into directional, bidirectional, and non-structurally coupled relationships. These findings were manually validated against the repository's source code to ensure accuracy.
+
+***
+
+### Date: 2026-05-15
+
+### Period: 5 hours
+
+### Cooperators
+* Abdullah Rezaei
+
+### Objectives
+* **Data Visualization:** Organizing the gathered information and generating graphs and tables
+* **Code inspection:** Reviewing the codebase to identify design patterns and trace them 
+* **Report Drafting:** Writing the final report for the architectural analysis
+* **Review and Revision:** Collecting feedback and revising the document accordingly
+
+### Activities & Effort
+* [x] Data Visualization: Organized the extracted data and created clear graphs and tables to visually represent the findings in the final report
+* [x] Code inspection: The codebase reviewed for identifying design patterns according to dependency diagram and by the help of IDE, the flow of the code was traced
+* [x] Report Drafting: Wrote the final report, to cover the required objectives
+* [x] Review & Revision: Received feedback on the initial draft and took the comments into consideration to make necessary revisions and improvements
+
+### Report
+The information and data gathered from previous analyses were organized and translated into visual formats, including graphs and tables, to clearly present the findings. The codebased inspected and targeted use cases traced; rust-analyzer is a plugin and acts as a language server protocol on IDE which can show the definition and the usages of everything which makes the tracing easier to identify the flow of a process. Once the initial draft was completed, feedback was collected and carefully reviewed and took into consideration.
