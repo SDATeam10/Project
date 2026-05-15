@@ -143,7 +143,7 @@ Additionally, incremental computation is expressed through abstract query traits
 > *Note*
 > In rust, abstraction is often achieved through generics and traits rather than runtime polymorphism. As a result, components frequently depend on trait-constrained types using static dispatch (`impl Trait` or generics), instead of storing trait objects (`dyn Trait`) as is common in classical OOP languages like Java.
 
-LSP is less directly applicable in rust, since rust doesn't have classic subtype hierarchies, unlike OOP languages. In practice, rust-analyzer’s small, focused traits and explicit module boundaries make substitutability issues relatively uncommon. And we couldn't find any concrete example of a violation of this principle.
+LSP is less directly applicable in rust, since Rust doesn't have classic subtype hierarchies, unlike OOP languages. In practice, rust-analyzer’s small, focused traits and explicit module boundaries make substitutability issues relatively uncommon. And we couldn't find any concrete example of a violation of this principle.
 
 Finally, the ISP principle can be found in different aspects, like the decision to split the database in two separate interfaces (`SourceDatabase` and `SourceDatabaseExt`) to hide information where not relevant. Many of the components mentioned in the SRP section elicit an ISP friendly behaviour, as the interface they provide is relatively narrow.
 Additionally, given rust's traits, the language itself encourages writing small interfaces that can be combined to achieve more complex behaviour. 
