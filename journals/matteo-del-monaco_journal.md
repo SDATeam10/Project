@@ -140,3 +140,5 @@
     - `src/diagrams/architecture/system-context.puml` : +1/-1
 - **12:36:29 — fix: minor edits**
     - `src/deliverables/Architecture.md` : +5/-3
+- **12:37:23 — fix: rust -> Rust**
+    - `src/deliverables/Architecture.md` : +1/-1
