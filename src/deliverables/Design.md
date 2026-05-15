@@ -1,5 +1,13 @@
 # Software Design Report
 
+This report analyzes the design of `rust-analyzer` from three perspectives: static code dependencies, coupling behavior, and selected GoF design patterns. The goal is to connect the architectural diagrams and metrics with concrete evidence from the source code and project history.
+
+The report is organized as follows:
+
+- **Code Dependencies:** identifies the main dependency path and central modules using Fan-In and Fan-Out metrics.
+- **Coupling:** studies frequently changed files and temporal coupling to understand where design risks may appear.
+- **GoF Design Patterns:** explains four design patterns found along the main path from the editor-facing layer to parsing infrastructure.
+
 ## Code Dependencies
 
 ### Methodology and Tools
