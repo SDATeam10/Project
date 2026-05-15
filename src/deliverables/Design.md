@@ -30,16 +30,16 @@ We evaluated the architectural coupling using standard metrics: **Fan-Out** and 
 
 ### Hotspots
 
-To get the **most frequently changed points**, the git repository must be analyzed; [code-maat](https://github.com/adamtornhill/code-maat) is a tool which can be used to analyze the history of git repository. Based on reports from code-maat, here is the top 50 most frequently changed files and crates(a single compiled unit of Rust code, either a library or an executable) and the [complete results](../diagrams/design/file_revisions.csv) is also available
+To get the **most frequently changed points**, the git repository must be analyzed; [code-maat](https://github.com/adamtornhill/code-maat) is a tool which can be used to analyze the history of git repository. Based on reports from code-maat, here is the top 50 most frequently changed files and crates (a single compiled unit of Rust code, either a library or an executable) and the [complete results](../diagrams/design/file_revisions.csv) is also available.
 ![hotspots](../diagrams/design/file_crates_hotspots.png "Hotspots")
 
 ### Temporal Coupling
 
-Getting the group of files **changed together** is feasible by checking the commits history from git repository; code-maat analyzes the history or repository and gives all pair of files changed together in same commit.
-The output must be filtered in order to take desired file types into consideration. At the end of the process, there will be a list of pairs of files changed together with the number of revision and the degree
+Getting the group of files **changed together** is feasible by checking the commits history from git repository; code-maat analyzes the history of repository and gives all pair of files changed together in same commit.
+The output must be filtered in order to take desired file types into consideration. At the end of the process, there will be a list of pairs of files changed together with the number of revision and the degree.
 
 The output from previous step can be checked whether the temporal coupling is due to code dependency or not; [rust-analyzer](https://github.com/rust-lang/rust-analyzer) is an implementation of language server protocol for Rust programming language therefore it can be used to analyze its own code base and check dependency between files. It can check code dependency between files from the output of coad-maat temporal coupling analyze.
-Here is the summary of output and the [complete result](../diagrams/design/structural_coupling_results.csv) is also available
+Here is the summary of output and the [complete result](../diagrams/design/structural_coupling_results.csv) is also available.
 
 #### Temporal Coupling WITH Code Dependency (Structurally Coupled)
 
