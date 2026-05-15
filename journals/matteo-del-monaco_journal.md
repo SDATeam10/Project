@@ -142,3 +142,5 @@
     - `src/deliverables/Architecture.md` : +5/-3
 - **12:37:23 — fix: rust -> Rust**
     - `src/deliverables/Architecture.md` : +1/-1
+- **12:39:19 — fix: broken design link**
+    - `src/deliverables/Architecture.md` : +1/-1
