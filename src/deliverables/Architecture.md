@@ -79,8 +79,6 @@ The external IDE interacts directly with the language server exposed by Rust Ana
 
 
 
-Though omitted in the diagram, as it doesn't concern the runtime system, at development/installation time, another container becomes relevant:
-`xtask` is Rust Analyzer's custom build tool; it is able to produce different types of Rust Analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
 
 As Rust Analyzer is a single deployable unit, the clean architecture blueprint is not yet clearly visible at this level of abstraction.
 Rust Analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become evident in the next section.
@@ -117,6 +115,16 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
         />
         <figcaption><em>Figure 3.2: Component diagram</em></figcaption>
 </figure>
+
+### Boundaries
+
+<!--
+Let's mention about the boundaries in the architecture of Rust Analyzer.
+- one main boundary is rust-analyzer crate, having an LSP interface in terms of stdio
+- IDE is the first API boundary, specifically thanks to AnalysisHost and Analysis objects.
+- syntax crate is another API boundary
+- top level hir crate is an API boundary
+-->
 
 ***
 
