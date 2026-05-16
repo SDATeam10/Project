@@ -118,6 +118,17 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
         <figcaption><em>Figure 3.2: Component diagram</em></figcaption>
 </figure>
 
+### Boundaries
+
+After analyzing more in details the components, several boundaries have been discovered.
+
+Starting from the lowest level, the `syntax` crate constitutes the first boundary. In fact this crate is responsible to transform text into a lossless syntax tree, as a consequence it knows nothing about salsa or LSP, so this makes it totally independent from the rest of Rust Analyzer. Basically the `syntax` crate can be seen as an enrty point to the system, providing API calls, so it is an API boundary.
+
+Going up, we find another API boundary at the top level `hir` crate. That's beacuse it wraps ECS-style internal API into a more Object Oriented flavored API.
+
+On top of `hir`, there is the API boundary given by `ide` crate. Indeed, thanks to `Analysis` type and all its methods, it behaves like a façade, providing API calls for the upper level `rust-analyzer` crate. And also because it translates the data received from `hir` into POD structs, without knowing anything about LSP.
+
+Last boundary is at the `rust-analyzer` crate, simply because it's the only crate knowing something about Language Server Protocol, so it defines an LSP interface in terms of *stdio*, acting as an **Anti-Corruption Layer**.
 ### SOLID Principles
 
 When analysing rust-analyzer under SOLID's design philosophy, it's crucial to keep in mind is that Rust is not a classic OOP language.

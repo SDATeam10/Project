@@ -1,0 +1,31 @@
+=== Rust-Analyzer Project GLOBAL Dependency Analysis ===
+
+Total Crates Analyzed: 36
+
+HIGHEST FAN-OUT:
+  154 dependencies	 -> syntax::ast::make::ext
+  119 dependencies	 -> hir
+  74 dependencies	 -> ide
+  71 dependencies	 -> hir_ty::infer
+  67 dependencies	 -> hir::semantics
+
+LOWEST FAN-OUT:
+  0 dependencies	 -> edition
+  0 dependencies	 -> syntax::syntax_error
+  0 dependencies	 -> base_db::all_crates
+  0 dependencies	 -> base_db::set_all_crates_with_durability
+  0 dependencies	 -> intern::symbol
+
+HIGHEST FAN-IN:
+  1367 times		 -> syntax::ast::generated::nodes
+  1121 times		 -> syntax::syntax_node
+  889 times		 -> ide_db
+  670 times		 -> parser::syntax_kind::generated
+  643 times		 -> hir::semantics
+
+LOWEST FAN-IN:
+  0 times		 -> base_db::change::file_text_durability
+  0 times		 -> base_db::change::source_root_durability
+  0 times		 -> cfg::cfg_expr::next_cfg_expr
+  0 times		 -> cfg::dnf::distribute_conj
+  0 times		 -> cfg::dnf::flatten

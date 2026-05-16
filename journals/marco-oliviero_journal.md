@@ -124,4 +124,39 @@ Today's work was dedicated on reviewing and writing the report for the architect
 
 ### Report
 
-Today's work was dedicated investigating, in a more detailed way, in the Rust-analyzer architecture to individuate the applications of SOLID principle, but more importantly for their violations.
+Today's work was dedicated on investigating, in a more detailed way, in the Rust-analyzer architecture to individuate the applications of SOLID principle, but more importantly for their violations.
+
+***
+
+### Date: 2026-05-15
+
+### Period: 2 hours
+
+### Objectives
+* **Design report review**: reviewing the `Design.md` report
+* **Architecture report review**: reviewing and adjusting the `Architecture.md` report
+
+### Activities & Effort
+* [x] Read and reviewed the report for the Design part, notifying the other contributors for doubts
+* [x] Adjusted the Architecture report on some inconsistencies
+
+### Report
+
+Today's work was dedicated on reading, reviewing and adjusting the two main reports documents.
+
+***
+
+### Date: 2026-05-16
+
+### Period: 1 hours
+
+### Objectives
+* **Architecture report**: add more details in the `Architecture.md` report
+
+### Activities & Effort
+* [x] Searched for details about boundaries in the project
+* [x] Added a section in the `Architecture.md` report about boundaries
+
+### Report
+
+Today's work was dedicated on researching more about Rust Analyzer architecture, giving more interest in the boundaries and wrote a paragraph about them.
