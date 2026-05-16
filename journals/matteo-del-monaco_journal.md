@@ -133,3 +133,19 @@
 ### 2026-05-15
 - **11:00:58 — feat: design review**
     - `design-review.md` : +35/-0
+- **12:28:43 — feat: SOLID analysis**
+    - `src/deliverables/Architecture.md` : +47/-18
+- **12:29:15 — feat: merge**
+    - `img/diagrams/architecture/container.png` : +0/-0
+    - `img/diagrams/architecture/system-context.png` : +0/-0
+    - `src/diagrams/architecture/container.puml` : +3/-2
+    - `src/diagrams/architecture/system-context.puml` : +1/-1
+- **12:36:29 — fix: minor edits**
+    - `src/deliverables/Architecture.md` : +5/-3
+- **12:37:23 — fix: rust -> Rust**
+    - `src/deliverables/Architecture.md` : +1/-1
+- **12:39:19 — fix: broken design link**
+    - `src/deliverables/Architecture.md` : +1/-1
+- **17:12:34 — feat: recompiled plantuml source to regenarate .png**
+    - `img/diagrams/architecture/container.png` : +0/-0
+    - `img/diagrams/architecture/system-context.png` : +0/-0
