@@ -118,13 +118,15 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
 
 ### Boundaries
 
-<!--
-Let's mention about the boundaries in the architecture of Rust Analyzer.
-- one main boundary is rust-analyzer crate, having an LSP interface in terms of stdio
-- IDE is the first API boundary, specifically thanks to AnalysisHost and Analysis objects.
-- syntax crate is another API boundary
-- top level hir crate is an API boundary
--->
+After analyzing more in details the components, several boundaries have been discovered.
+
+Starting from the lowest level, the `syntax` crate constitutes the first boundary. In fact this crate is responsible to transform text into a lossless syntax tree, as a consequence it knows nothing about salsa or LSP, so this makes it totally independent from the rest of Rust Analyzer. Basically the `syntax` crate can be seen as an enrty point to the system, providing API calls, so it is an API boundary.
+
+Going up, we find another API boundary at the top level `hir` crate. That's beacuse it wraps ECS-style internal API into a more Object Oriented flavored API.
+
+On top of `hir`, there is the API boundary given by `ide` crate. Indeed, thanks to `Analysis` type and all its methods, it behaves like a façade, providing API calls for the upper level `rust-analyzer` crate. And also because it translates the data received from `hir` into POD structs, without knowing anything about LSP.
+
+Last boundary is at the `rust-analyzer` crate, simply because it's the only crate knowing something about Language Server Protocol, so it defines an LSP interface in terms of *stdio*, acting as an **Anti-Corruption Layer**.
 
 ***
 
