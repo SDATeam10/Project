@@ -1,13 +1,23 @@
-# Software design report
+# Software Design Report
+
+This report analyzes the design of `rust-analyzer` from three perspectives: static code dependencies, coupling behavior, and selected GoF design patterns. The goal is to connect the architectural diagrams and metrics with concrete evidence from the source code and project history.
+
+The report is organized as follows:
+
+- **Code Dependencies:** identifies the main dependency path and central modules using Fan-In and Fan-Out metrics.
+- **Coupling:** studies frequently changed files and temporal coupling to understand where design risks may appear.
+- **GoF Design Patterns:** explains four design patterns found along the main path from the editor-facing layer to parsing infrastructure.
 
 ## Code Dependencies
 
 ### Methodology and Tools
-To analyze dependencies across the `rust-analyzer` workspace, we utilized **`cargo-modules`** to extract AST-aware `.dot` graphs and developed a [custom Node.js script](../../tools/analyze-dependencies.js) to process the data workspace-wide. `std` and external crates are excluded to strictly measure internal system coupling.
 
-### Architectural Validation
-During our initial system modeling, we visually hypothesized that the primary execution spine of the system flows sequentially through specific core components:
-**Rust Analyzer ➔ Ide ➔ Hir ➔ Syntax ➔ Parser**
+To analyze dependencies across the `rust-analyzer` workspace, we utilized `cargo-modules` to extract AST-aware `.dot` graphs and developed a [custom Node.js script](../../tools/analyze-dependencies.js) to process the data workspace-wide. `std` and external crates are excluded to strictly measure internal system coupling.
+
+### Fan-In / Fan-Out Analysis
+
+We evaluated architectural coupling using **Fan-Out** and **Fan-In**. Fan-Out identifies modules that depend on many other internal modules, while Fan-In identifies modules that are depended on frequently by the rest of the workspace. After extracting and checking the workspace code dependencies, the main dependency path appears to be: **Rust Analyzer ➔ Ide ➔ Hir ➔ Syntax ➔ Parser**.
+
 <figure align="center">
         <img
         src="../../img/diagrams/architecture/component.png"
@@ -16,29 +26,24 @@ During our initial system modeling, we visually hypothesized that the primary ex
         <figcaption><em>Component diagram</em></figcaption>
 </figure>
 
-Following this visual design, we intentionally focused our analytical efforts on this pipeline. The subsequent automated dependency extraction perfectly validated this hypothesis. The calculated metrics proved that these specific crates act as the absolute backbone of the system, exhibiting the highest Fan-In and Fan-Out values.
-
-### Results and Analysis (Fan-In / Fan-Out)
-
-We evaluated the architectural coupling using standard metrics: **Fan-Out** and **Fan-In**. The top 5 results for each category across the entire workspace are detailed below:
+The top 5 results for each category across the entire workspace are shown below *(for more details, refer to: [Crate-Level Dependency Report](../../res/crate-level-dependencies.txt) and [Global System Dependency Report](../../res/global-dependencies.txt)).*:
 
 ![architectural metrics](../diagrams/design/architectural_metrics.png "Architectural Metrics")
-
-*(For more details, refer to: [Crate-Level Dependency Report](../../res/crate-level-dependencies.txt) and [Global System Dependency Report](../../res/global-dependencies.txt)).*
 
 ## Coupling
 
 ### Hotspots
 
 To get the **most frequently changed points**, the git repository must be analyzed; [code-maat](https://github.com/adamtornhill/code-maat) is a tool which can be used to analyze the history of git repository. Based on reports from code-maat, here is the top 50 most frequently changed files and crates (a single compiled unit of Rust code, either a library or an executable) and the [complete results](../diagrams/design/file_revisions.csv) is also available.
+
 ![hotspots](../diagrams/design/file_crates_hotspots.png "Hotspots")
 
 ### Temporal Coupling
 
 Getting the group of files **changed together** is feasible by checking the commits history from git repository; code-maat analyzes the history of repository and gives all pair of files changed together in same commit.
-The output must be filtered in order to take desired file types into consideration. At the end of the process, there will be a list of pairs of files changed together with the number of revision and the degree.
+The output must be filtered in order to take desired file types into consideration. At the end of the process, there will be a list of pairs of files changed together with the number of revision(the total number of Git commits involving these files) and the degree(the percentage of time these two files are committed together).
 
-The output from previous step can be checked whether the temporal coupling is due to code dependency or not; [rust-analyzer](https://github.com/rust-lang/rust-analyzer) is an implementation of language server protocol for Rust programming language therefore it can be used to analyze its own code base and check dependency between files. It can check code dependency between files from the output of coad-maat temporal coupling analyze.
+The output from the previous step can be used to check whether the temporal coupling is due to code dependencies or not; [rust-analyzer](https://github.com/rust-lang/rust-analyzer) is an implementation of language server protocol for Rust programming language therefore it can be used to analyze its own code base and check dependency between files. It can check code dependencies between files directly from the output generated by coad-maat's temporal coupling analysis.
 Here is the summary of output and the [complete result](../diagrams/design/structural_coupling_results.csv) is also available.
 
 #### Temporal Coupling WITH Code Dependency (Structurally Coupled)
@@ -57,7 +62,7 @@ This section explains 4 GoF design patterns found in the path:
 rust-analyzer -> ide -> hir -> syntax -> parser
 ```
 
-## What Is Happening In This Codebase?
+### What Is Happening In This Codebase?
 
 `rust-analyzer` is the program that helps an editor understand Rust code.
 
@@ -78,7 +83,7 @@ rust-analyzer then has to:
 
 The design patterns appear in this journey.
 
-## Glossary
+### Glossary
 
 - **Editor / LSP client:** VS Code, Vim, etc. The editor sends requests to rust-analyzer.
 - **LSP:** Language Server Protocol. It is the message format used between editor and language server.
@@ -89,7 +94,7 @@ The design patterns appear in this journey.
 - **HIR:** A higher-level understanding of code, such as "this name refers to this function" or "this expression has this type".
 - **IDE layer:** The layer that answers editor questions such as hover, completion, and go-to-definition.
 
-## Big Picture Flow
+### Big Picture Flow
 
 ```mermaid
 flowchart LR
@@ -112,7 +117,7 @@ flowchart LR
 
 ---
 
-# 1. Adapter - Structural
+### Adapter - Structural
 
 An **Adapter** converts one format into another format.
 
@@ -140,7 +145,7 @@ rust-analyzer uses internal FileId + offset positions.
 Adapter code converts between them.
 ```
 
-## Location
+#### Location
 
 - `crates/rust-analyzer/src/handlers/request.rs`
   - `handle_goto_definition`
@@ -154,7 +159,7 @@ Adapter code converts between them.
   - `goto_definition_response`
   - `location_info`
 
-## Execution Trace And Proof
+#### Execution Trace And Proof
 
 For **Go to Definition**:
 
@@ -170,7 +175,7 @@ For **Go to Definition**:
 
 3. That handler calls:
 
-   ```text
+   ```rust
    from_proto::file_position(...)
    ```
 
@@ -190,33 +195,29 @@ For **Go to Definition**:
 
 7. Before sending the answer back, rust-analyzer calls:
 
-   ```text
+   ```rust
    to_proto::goto_definition_response(...)
    ```
 
 8. That converts the internal answer back into LSP data the editor understands.
 
-This proves Adapter because `from_proto` and `to_proto` sit between two incompatible interfaces and translate both directions.
+The fact that `from_proto` and `to_proto` sits between two incompatible interfaces, providing a translation in both directions, proves the application of the Adapter pattern.
 
-## Role Mapping
+#### Role Mapping
 
 - **Client:** request handlers like `handle_goto_definition`.
 - **Adaptee:** LSP types, such as `lsp_types::Position` and `lsp_types::Range`.
 - **Target:** rust-analyzer internal types, such as `FilePosition`, `FileRange`, and `TextRange`.
 - **Adapter:** `from_proto` and `to_proto`.
 
-## Problem Solved And Alternatives
+#### Problem Solved And Alternatives
 
 Why this is useful:
 
 - The editor and rust-analyzer use different data formats.
 - Adapter keeps editor-specific LSP details out of the analysis engine.
 
-Alternative:
-
-```text
-Pass LSP types directly into the analysis engine.
-```
+Alternative: Pass LSP types directly into the analysis engine.
 
 Pros:
 
@@ -229,7 +230,7 @@ Cons:
 
 ---
 
-# 2. Facade - Structural
+### Facade - Structural
 
 A **Facade** gives a simple front door to a complicated system.
 
@@ -263,7 +264,7 @@ The request handler asks ide::Analysis a simple question:
 ide::Analysis hides parsing, semantic analysis, database queries, and cancellation.
 ```
 
-## Location
+#### Location
 
 Important files and names:
 
@@ -282,7 +283,7 @@ Important files and names:
   - `Semantics::parse_guess_edition`
   - `Semantics::type_of_expr`
 
-## Execution Trace And Proof
+#### Execution Trace And Proof
 
 For **Go to Definition**:
 
@@ -292,15 +293,15 @@ For **Go to Definition**:
 
 3. Then it calls the simple facade method:
 
-   ```text
+   ```rust
    snap.analysis.goto_definition(position, &config)
    ```
 
 4. Instead of manually parsing files, resolving names, and running type inference, the handler relies on `ide::Analysis` to hide all that complexity.
 
-This proves Facade because `ide::Analysis` is the simple public object that hides many subsystems.
+`ide::Analysis` is a clear use of the Facade pattern as it's a simple public object that hides many, more complicated, subsystems.
 
-## Role Mapping
+#### Role Mapping
 
 - **Facade:** `ide::Analysis`.
 - **Facade owner:** `AnalysisHost`, which stores the current analysis state.
@@ -313,7 +314,7 @@ This proves Facade because `ide::Analysis` is the simple public object that hide
   - feature modules like `goto_definition.rs`
 - **Client:** request handlers in `rust-analyzer`.
 
-## Problem Solved And Alternatives
+#### Problem Solved And Alternatives
 
 Why this is useful:
 
@@ -321,11 +322,7 @@ Why this is useful:
 - Complex analysis logic stays inside `ide` and `hir`.
 - The server has one clear place to ask IDE questions.
 
-Alternative:
-
-```text
-Every request handler directly calls parser, syntax, HIR, and database APIs.
-```
+Alternative: Every request handler directly calls parser, syntax, HIR, and database APIs.
 
 Pros:
 
@@ -338,7 +335,7 @@ Cons:
 - Harder to change internal analysis later.
 
 ---
-# 3. Builder - Creational
+### Builder - Creational
 
 A **Builder** constructs a complex object step by step.
 
@@ -364,13 +361,9 @@ flowchart LR
     class Tree product;
 ```
 
-```text
-The parser produces steps.
-SyntaxTreeBuilder follows those steps.
-At the end, rust-analyzer gets a syntax tree.
-```
+The parser module produces a series of steps. `SyntaxTreeBuilder` constructs the syntax tree progressively by following the steps defined by `Parser`. At the end of the process rust-analyzer receives a syntax tree.
 
-## Location
+#### Location
 
 Important files and names:
 
@@ -398,7 +391,7 @@ Important files and names:
   - `Step`
   - `Output::iter`
 
-## Execution Trace And Proof
+#### Execution Trace And Proof
 
 Imagine the source code:
 
@@ -418,13 +411,13 @@ The flow is:
 
 3. Parsing reaches:
 
-   ```text
+   ```rust
    SourceFile::parse
    ```
 
 4. `SourceFile::parse` calls:
 
-   ```text
+   ```rust
    syntax::parsing::parse_text
    ```
 
@@ -446,7 +439,7 @@ The flow is:
 
 7. `build_tree` calls `SyntaxTreeBuilder` methods:
 
-   ```text
+   ```rust
    start_node(...)
    token(...)
    finish_node(...)
@@ -455,9 +448,9 @@ The flow is:
 
 8. `SyntaxTreeBuilder` builds the final syntax tree.
 
-This proves Builder because a complex object, the syntax tree, is constructed through a sequence of controlled building steps.
+As the construction of a complex object, syntax tree, happens through a series of predefined discrete steps, proves the use of the Builder pattern.
 
-## Role Mapping
+#### Role Mapping
 
 - **Product:** the final syntax tree, stored as `GreenNode` and wrapped in `Parse<SourceFile>`.
 - **Builder:** `SyntaxTreeBuilder`.
@@ -465,7 +458,7 @@ This proves Builder because a complex object, the syntax tree, is constructed th
 - **Step list:** `parser::Output` and `parser::Step`.
 - **Client:** `SourceFile::parse`, reached by IDE features through `hir::Semantics`.
 
-## Problem Solved And Alternatives
+#### Problem Solved And Alternatives
 
 Why this is useful:
 
@@ -473,11 +466,7 @@ Why this is useful:
 - The syntax layer can focus on building the tree.
 - The parser does not need to know the exact tree-building details.
 
-Alternative:
-
-```text
-Make the parser directly create syntax tree nodes.
-```
+Alternative: Make the parser directly create syntax tree nodes.
 
 Pros:
 
@@ -491,9 +480,9 @@ Cons:
 
 ---
 
-# 4. Strategy - Behavioral
+#### Strategy - Behavioral
 
-**Strategy** means choosing one algorithm from several possible algorithms.
+The **Strategy** pattern involves choosing one algorithm out of many possible ones.
 
 ```mermaid
 flowchart LR
@@ -527,11 +516,9 @@ flowchart LR
     class Parser,Output,Tree common;
 ```
 
-```text
 The parser applies different parsing strategies based on whether it is parsing a complete Rust file, an expression, a type, or a pattern.
-```
 
-## Location
+#### Location
 
 Important files and names:
 
@@ -547,7 +534,7 @@ Important files and names:
   - `grammar::entry::top::pattern`
   - `grammar::entry::top::macro_items`
 
-## Execution Trace And Proof
+#### Execution Trace And Proof
 
 For **Go to Definition**:
 
@@ -569,7 +556,7 @@ For **Go to Definition**:
 
 4. Then the handler calls:
 
-  ```text
+  ```rust
   snap.analysis.goto_definition(position, &config)
   ```
 
@@ -589,37 +576,37 @@ For **Go to Definition**:
 
 7. That feature needs to understand the file's syntax, so it uses:
 
-  ```text
+  ```rust
   hir::Semantics
   ```
 
 8. Then it parses the current file using:
 
-  ```text
+  ```rust
   sema.parse_guess_edition(file_id)
   ```
 
 9. Inside `parse_guess_edition`, rust-analyzer asks the file to parse itself.
   That leads to:
 
-  ```text
+  ```rust
   SourceFile::parse
   ```
 10. `SourceFile::parse` calls:
 
-  ```text
+  ```rust
   syntax::parsing::parse_text
   ```
 
 11. `parse_text` chooses the full-file parser strategy:
 
-  ```text
+  ```rust
   TopEntryPoint::SourceFile
   ```
 
 12. Then it calls:
 
-  ```text
+  ```rust
   TopEntryPoint::SourceFile.parse(...)
   ```
 
@@ -636,7 +623,7 @@ For **Go to Definition**:
 
 14. In this Go-to-Definition trace, the selected strategy is:
 
-  ```text
+  ```rust
   grammar::entry::top::source_file
   ```
 
@@ -650,11 +637,9 @@ For **Go to Definition**:
   build syntax tree
   ```
 
-This proves Strategy because `TopEntryPoint::parse` has several possible
-parsing algorithms available, and it selects one grammar function based on the
-chosen `TopEntryPoint` value.
+`TopEntryPoint::parse` defines several possible parsing algorithms, and it selects one grammar function based on the chosen `TopEntryPoint` value, which is a clear use of the Strategy pattern.
 
-## Role Mapping
+#### Role Mapping
 
 - **Context:** `TopEntryPoint::parse`.
 - **Strategy selector:** the `TopEntryPoint` enum.
@@ -668,7 +653,7 @@ chosen `TopEntryPoint` value.
 - **Common output:** `parser::Output`.
 - **Client:** `syntax::parsing::parse_text`.
 
-## Problem Solved And Alternatives
+#### Problem Solved And Alternatives
 
 Why this is useful:
 
@@ -677,11 +662,9 @@ Why this is useful:
 - Only the selected grammar function changes.
 - This keeps parsing code organized.
 
-Alternative:
+Alternative: Write totally separate parser pipelines.
 
-```text
-Write totally separate parser pipelines:
-
+```rust
 parse_full_file(...)
 parse_expression(...)
 parse_type(...)
