@@ -149,3 +149,13 @@
 - **17:12:34 — feat: recompiled plantuml source to regenarate .png**
     - `img/diagrams/architecture/container.png` : +0/-0
     - `img/diagrams/architecture/system-context.png` : +0/-0
+
+### 2026-05-17
+- **12:11:24 — style: reworked boudary section**
+    - `src/deliverables/Architecture.md` : +16/-13
+- **14:17:32 — feat: reworked previous sections and added diagrams to improve clarity**
+    - `src/deliverables/Architecture.md` : +151/-23
+- **14:22:15 — fix: duplicated sentece**
+    - `src/deliverables/Architecture.md` : +0/-1
+- **14:25:21 — fix: minor rewording**
+    - `src/deliverables/Architecture.md` : +1/-4
