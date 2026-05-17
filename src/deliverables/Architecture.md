@@ -82,7 +82,7 @@ The external IDE interacts directly with the language server exposed by rust-ana
 Although we won't delve into its specifics, as it doesn't concern the runtime system, `xtask` is rust-analyzer's custom build tool; it is able to produce different types of rust-analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
 
 As rust-analyzer is a single deployable unit, the clean architecture blueprint is not yet clearly visible at this level of abstraction.
-However, rust-analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become apparent in the next section.
+However, rust-analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become more apparent in the next section.
 
 ***
 
@@ -101,7 +101,7 @@ At the component level, rust-analyzer can be understood as a loosely layered arc
         <figcaption><em>Figure 3.1: Component diagram</em></figcaption>
 </figure>
 
-However, as rust-analyzer is quite complex, we will focus our analysis on the conceptual layers we identified, while glossing over some of the more implementation-specific details or project related crate management. Below is a diagram that highlights the core components of our analysis, while omitting some implementation complexity.
+However, as rust-analyzer is quite complex, we will focus our analysis on the conceptual layers we identified, while glossing over some of the more implementation-specific details or project related crate management. Below there's a diagram that highlights the core components of our analysis, while omitting some implementation complexity.
 
 ```mermaid
 flowchart TD
@@ -164,11 +164,11 @@ Finally, the outermost API boundary is represented by the `rust-analyzer` crate.
 
 ### SOLID Principles
 
-When analysing rust-analyzer under SOLID's design philosophy, it's crucial to keep in mind is that Rust is not a classic OOP language.
+When analysing rust-analyzer under SOLID's design philosophy, it's crucial to keep in mind that Rust is not a classic OOP language.
 Solid principles were originally formulated in a very different context, and it's main subject of study were languages heavily based on inheritance and subtype polymorphism.
 
 Rust follows a different design philosophy as it favours composition, algebraic data types, and trait-based abstractions over classical inheritance.
-Because of this, some SOLID principles aren't directly applicable, and are often reinterpreted through traits, modular boundaries, and composition patterns. 
+Because of this, some SOLID principles aren't directly applicable, and are often reinterpreted through traits, modular boundaries and composition patterns. 
 
 However, an analysis of rust-analyzer through these lenses can still be insightful.
 
@@ -222,7 +222,7 @@ flowchart LR
     Tree --> IDE
 ```
 
-- **Graceful cancellation**: whenever a user types a new character, any background process currently analysing stale code needs to be stopped. The `salsa` database, enables this functionality by keeping track of a revision counter, which is increased whenever the underlying data is modified. This change in revision counter causes background threads to panic, while the outer LSP boundary handles these events using `catch_unwind`. Panics are then transformed into graceful cancellation responses for the IDE, preventing the system from crashing while still freeing up CPU resources immediately.
+- **Graceful cancellation**: whenever a user types a new character, any background process currently analysing stale code needs to be stopped. The `salsa` database enables this functionality by keeping track of a revision counter, which is increased whenever the underlying data is modified. This change in revision counter causes background threads to panic, while the outer LSP boundary handles these events using `catch_unwind`. Panics are then transformed into graceful cancellation responses for the IDE, preventing the system from crashing while still freeing up CPU resources immediately.
 - **Isolated macro expansion**: Rust enables its users to write procedural macros, which execute custom, third-party code during compilation. Unfortunately poorly written macros can cause infinite-loops or panic. In order to keep the language server responsive, rust-analyzer delegates macro expansion to an entirely separate OS process (`proc-macro-srv`). This creates a strict fault-isolation boundary: if a macro crashes, only the child process dies, while the main rust-analyser remains receptive to new inputs.
 
 ```mermaid
@@ -336,7 +336,7 @@ flowchart LR
     Tree --> IDE
 ```
 
-- **Granular cache invalidation**: When the user types a character, rust-analyzer packages the modification into a `Change` struct and applies it to the database. Thanks to `salsa`'s exact query dependency tracking, only specific data affected by that edit is invalidated and recomputed. (e.g., the local variables within the currently edited function). The rest of the project's semantic model remains cached and is instantly available.
+- **Granular cache invalidation**: When the user types a character, rust-analyzer packages the modification into a `Change` struct and applies it to the database. Thanks to `salsa`'s exact query dependency tracking, only specific data affected by that edit is invalidated and recomputed (e.g., the local variables within the currently edited function). The rest of the project's semantic model remains cached and is instantly available.
 
 ```mermaid
 sequenceDiagram
