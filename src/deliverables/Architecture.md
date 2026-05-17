@@ -94,7 +94,6 @@ However, rust-analyzer's designers were clearly aware of "clean code" and "clean
 
 At a high level, rust-analyzer is structured in a loosely layered way, as shown in the figure 3.1.
 When a client requests the analysis of some piece of code through rust-analyzer using the LSP protocol, the LSP layer forwards this request to the internal `IDE` layer.
-The LSP layer then forwards this request to the `IDE` layer. 
 Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
 the syntactic layer parses the text and generates a valid CST of the provided source files.
 Then, the semantic layer takes the CST input and applies semantical meaning to it: mapping syntax nodes to logical concepts, deriving typed AST view of the source code. 
