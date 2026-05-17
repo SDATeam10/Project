@@ -164,3 +164,5 @@
     - `src/diagrams/architecture/component.puml` : +2/-2
 - **14:35:44 — feat: added mermaid version of the layered architecture diagram**
     - `src/deliverables/Architecture.md` : +40/-10
+- **15:09:40 — feat: reworked flow of the document**
+    - `src/deliverables/Architecture.md` : +14/-13
