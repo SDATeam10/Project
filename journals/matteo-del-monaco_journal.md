@@ -159,3 +159,6 @@
     - `src/deliverables/Architecture.md` : +0/-1
 - **14:25:21 — fix: minor rewording**
     - `src/deliverables/Architecture.md` : +1/-4
+- **14:29:12 — feat: changed paths to more relevant VFS**
+    - `img/diagrams/architecture/component.png` : +0/-0
+    - `src/diagrams/architecture/component.puml` : +2/-2
