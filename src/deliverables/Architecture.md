@@ -92,7 +92,45 @@ However, rust-analyzer's designers were clearly aware of "clean code" and "clean
     * Did you observe any violation of SOLID principles at level 3 ?
 -->
 
-At a high level, rust-analyzer is structured in a loosely layered way, as shown in the figure 3.1.
+At a high level, rust-analyzer is structured in a loosely layered way, as shown in the diagram below.
+
+```mermaid
+flowchart TD
+
+    Client["IDE / Editor"]
+
+    subgraph LSP["LSP Integration Layer"]
+        RA["rust-analyzer LSP Server"]
+    end
+
+    subgraph IDELayer["IDE Layer"]
+        IDE["IDE APIs / Analysis"]
+    end
+
+    subgraph Semantic["Semantic Analysis Layer"]
+        HIR["HIR / Type Inference / Name Resolution"]
+    end
+
+    subgraph Syntax["Syntactic Analysis Layer"]
+        Parser["Parser + Syntax Tree"]
+    end
+
+    subgraph Infra["Infrastructure Layer"]
+        Salsa["Salsa Incremental Database"]
+        VFS["Virtual File System"]
+        ProcMacro["proc-macro-srv"]
+    end
+
+    Client --> RA
+    RA --> IDE
+    IDE --> HIR
+    HIR --> Parser
+
+    RA -. uses .-> Infra
+    IDE -. uses .-> Infra
+    HIR -. uses .-> Infra
+```
+
 When a client requests the analysis of some piece of code through rust-analyzer using the LSP protocol, the LSP layer forwards this request to the internal `IDE` layer.
 Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
 the syntactic layer parses the text and generates a valid CST of the provided source files.
@@ -101,18 +139,10 @@ Then, the semantic layer takes the CST input and applies semantic meaning to it:
 
 <figure align="center">
         <img
-        src="../../img/diagrams/architecture/layered-architecture.png"
-        alt="layered-architecture"
-        />
-        <figcaption><em>Figure 3.1: Rust's Analizer layered architecture</em></figcaption>
-</figure>
-
-<figure align="center">
-        <img
         src="../../img/diagrams/architecture/component.png"
         alt="component"
         />
-        <figcaption><em>Figure 3.2: Component diagram</em></figcaption>
+        <figcaption><em>Figure 3.1: Component diagram</em></figcaption>
 </figure>
 
 ### Boundaries
