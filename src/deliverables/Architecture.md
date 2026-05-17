@@ -91,8 +91,17 @@ However, rust-analyzer's designers were clearly aware of "clean code" and "clean
 - Component level: diagrams and explanations
     * Did you observe any violation of SOLID principles at level 3 ?
 -->
+At the component level, rust-analyzer can be understood as a loosely layered architecture organized around four conceptual layers: LSP integration, IDE services, semantic analysis, and syntactic analysis. These layers are supported by a shared infrastructure layer that provides incremental computation, file abstraction, and external process isolation. Rust-analyzer also provides services that handle cargo project management, profiling tools, conditional build support and interning functions. Figure 3.1 shows the full component diagram of rust-analyzer.
 
-At a high level, rust-analyzer is structured in a loosely layered way, as shown in the diagram below.
+<figure align="center">
+        <img
+        src="../../img/diagrams/architecture/component.png"
+        alt="component"
+        />
+        <figcaption><em>Figure 3.1: Component diagram</em></figcaption>
+</figure>
+
+However, as rust-analyzer is quite complex, we will focus our analysis on the conceptual layers we identified, while glossing over some of the more implementation-specific details or project related crate management. Below is a diagram that highlights the core components of our analysis, while omitting some implementation complexity.
 
 ```mermaid
 flowchart TD
@@ -131,23 +140,15 @@ flowchart TD
     HIR -. uses .-> Infra
 ```
 
-When a client requests the analysis of some piece of code through rust-analyzer using the LSP protocol, the LSP layer forwards this request to the internal `IDE` layer.
-Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
-the syntactic layer parses the text and generates a valid CST of the provided source files.
-Then, the semantic layer takes the CST input and applies semantic meaning to it: mapping syntax nodes to logical concepts, deriving typed AST view of the source code. 
 
 
-<figure align="center">
-        <img
-        src="../../img/diagrams/architecture/component.png"
-        alt="component"
-        />
-        <figcaption><em>Figure 3.1: Component diagram</em></figcaption>
-</figure>
+### Core information flow
+
+The system can be modelled as a series of pipes and filters, where information gradually flows through layers. In practice while requests flow downward from LSP to syntax, most layers also interact directly with shared infrastructure services such as incremental computation and file management, bypassing strict hierarchical constraints and qualifying this architecture as loosely layered.
 
 ### Boundaries
 
-A detailed analysis of rust-analyzer revealed the presence of several explicit domain boundaries.  
+A detailed analysis of rust-analyzer revealed the presence of several explicit domain boundaries, further strengthening our claim of rust-analyzer's layered architecture.  
 
 Starting from the lowest level, the `syntax` crate makes up the first boundary.
 This crate defines a clear API for handling the conversion from text to a lossless syntax tree.
