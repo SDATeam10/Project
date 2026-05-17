@@ -13,7 +13,7 @@
 -->
 
 ## Introduction
-rust-analyzer is structured using a **compiler-as-a-library** architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to note that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
+The rust-analyzer project is structured using a **compiler-as-a-library** architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to highlight that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
 
 <!--
 Note from Marco Oliviero:
@@ -79,11 +79,10 @@ The external IDE interacts directly with the language server exposed by rust-ana
 
 
 
-Though omitted in the diagram, as it doesn't concern the runtime system, at development/installation time, another container becomes relevant:
-`xtask` is rust-analyzer's custom build tool; it is able to produce different types of rust-analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
+Although we won't delve into its specifics, as it doesn't concern the runtime system, `xtask` is rust-analyzer's custom build tool; it is able to produce different types of rust-analyzer binaries, and it's used extensively in development to produce builds with different characteristics (testing, profiling, …).
 
 As rust-analyzer is a single deployable unit, the clean architecture blueprint is not yet clearly visible at this level of abstraction.
-rust-analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become evident in the next section.
+However, rust-analyzer's designers were clearly aware of "clean code" and "clean architecture" approaches as it will become apparent in the next section.
 
 ***
 
@@ -94,12 +93,11 @@ rust-analyzer's designers were clearly aware of "clean code" and "clean architec
 -->
 
 At a high level, rust-analyzer is structured in a loosely layered way, as shown in the figure 3.1.
-The analysis starts when the client requests some type of analysis through the LSP protocol.
-The LSP layer than forwards this request to the `IDE` layer. 
+When a client requests the analysis of some piece of code through rust-analyzer using the LSP protocol, the LSP layer forwards this request to the internal `IDE` layer.
+The LSP layer then forwards this request to the `IDE` layer. 
 Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
 the syntactic layer parses the text and generates a valid CST of the provided source files.
-Then, the semantic layer takes the CST input and applies semantical meaning to it: mapping syntax nodes to logical concepts. 
-
+Then, the semantic layer takes the CST input and applies semantical meaning to it: mapping syntax nodes to logical concepts, deriving typed AST view of the source code. 
 
 
 <figure align="center">
@@ -120,15 +118,20 @@ Then, the semantic layer takes the CST input and applies semantical meaning to i
 
 ### Boundaries
 
-After analyzing more in details the components, several boundaries have been discovered.
+A detailed analysis of rust-analyzer revealed the presence of several explicit domain boundaries.  
 
-Starting from the lowest level, the `syntax` crate constitutes the first boundary. In fact this crate is responsible to transform text into a lossless syntax tree, as a consequence it knows nothing about salsa or LSP, so this makes it totally independent from the rest of Rust Analyzer. Basically the `syntax` crate can be seen as an enrty point to the system, providing API calls, so it is an API boundary.
+Starting from the lowest level, the `syntax` crate makes up the first boundary.
+This crate defines a clear API for handling the conversion from text to a lossless syntax tree.
+Crucially, it knows nothing about the underlying infrastructure and is unaware of concepts like salsa or LSP.
+This clear separation of domain concepts, allows the `syntax` crate to evolve independently of the other components of the system. 
 
-Going up, we find another API boundary at the top level `hir` crate. That's beacuse it wraps ECS-style internal API into a more Object Oriented flavored API.
+When we increase the level of abstraction, we encounter another API boundary in the `hir` crate. This component defines an API that wraps the internal ECS-style internal API into a more *object-oriented* flavoured API, thus hiding implementation details to the other users of this crate.
 
-On top of `hir`, there is the API boundary given by `ide` crate. Indeed, thanks to `Analysis` type and all its methods, it behaves like a façade, providing API calls for the upper level `rust-analyzer` crate. And also because it translates the data received from `hir` into POD structs, without knowing anything about LSP.
+On top of `hir`, the `ide` crate defines another important boundary.
+This crate acts as a façade for interacting with analysis tools, and provides the key abstractions employed by rust-analyzer in the form of `Analysis` and `AnalysisHost`.
 
-Last boundary is at the `rust-analyzer` crate, simply because it's the only crate knowing something about Language Server Protocol, so it defines an LSP interface in terms of *stdio*, acting as an **Anti-Corruption Layer**.
+Finally, the outermost API boundary is represented by the `rust-analyzer` crate. This crate acts as an *anti-corruption layer* and is the bridge that connects the outside domain model (LSP driven interaction) to the internal domain representation. 
+
 ### SOLID Principles
 
 When analysing rust-analyzer under SOLID's design philosophy, it's crucial to keep in mind is that Rust is not a classic OOP language.
