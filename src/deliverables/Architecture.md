@@ -96,7 +96,7 @@ At a high level, rust-analyzer is structured in a loosely layered way, as shown 
 When a client requests the analysis of some piece of code through rust-analyzer using the LSP protocol, the LSP layer forwards this request to the internal `IDE` layer.
 Then `IDE` layer asks the lower levels to provide the actual analysis of the code:
 the syntactic layer parses the text and generates a valid CST of the provided source files.
-Then, the semantic layer takes the CST input and applies semantical meaning to it: mapping syntax nodes to logical concepts, deriving typed AST view of the source code. 
+Then, the semantic layer takes the CST input and applies semantic meaning to it: mapping syntax nodes to logical concepts, deriving typed AST view of the source code. 
 
 
 <figure align="center">
@@ -152,9 +152,6 @@ However, it is not strictly followed in all layers, since core structures (e.g.,
 DIP is followed at the boundary layer, with all components referencing the top level APIs defined by other components.
 This is evident in components such as `vfs` and the Salsa-based database layer, where higher-level IDE logic operates over `FileId` and virtual file abstractions. Actual file system I/O operations are delegated to `loader.rs` which defines abstraction traits for file loading and watching. The concrete implementations are provided by `vfs_notify` instead. This enables higher-level logic to remain independent of platform-specific I/O concerns.
 Additionally, incremental computation is expressed through abstract query traits rather than concrete data manipulation.
-
-> *Note*
-> In rust, abstraction is often achieved through generics and traits rather than runtime polymorphism. As a result, components frequently depend on trait-constrained types using static dispatch (`impl Trait` or generics), instead of storing trait objects (`dyn Trait`) as is common in classical OOP languages like Java.
 
 LSP is less directly applicable in rust, since Rust doesn't have classic subtype hierarchies, unlike OOP languages. In practice, rust-analyzer’s small, focused traits and explicit module boundaries make substitutability issues relatively uncommon. And we couldn't find any concrete example of a violation of this principle.
 
