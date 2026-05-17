@@ -162,3 +162,5 @@
 - **14:29:12 — feat: changed paths to more relevant VFS**
     - `img/diagrams/architecture/component.png` : +0/-0
     - `src/diagrams/architecture/component.puml` : +2/-2
+- **14:35:44 — feat: added mermaid version of the layered architecture diagram**
+    - `src/deliverables/Architecture.md` : +40/-10
