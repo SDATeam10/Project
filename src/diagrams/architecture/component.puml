@@ -16,7 +16,7 @@ System_Boundary(sn, "Rust Analyzer System"){
     Component(project, "Project", "crates/toolchain, crates/project-model, crates/flycheck", "Provide functionalities related to the project's structure and get compiler errors for the “check on save” feature")
     Component(macro, "Macros", "crates/mbe, crates/tt, crates/proc-macro-api, crates/proc-macro-srv, crates/proc-macro-srv-cli", "These crates implement macros as token tree -> token tree transforms. They are independent from the rest of the code.")
     Component(cfg, "Cfg", "crates/cfg", "This crate is responsible for parsing, evaluation and general definition of cfg attributes.")
-    Component(paths, "Paths", "crates/vfs, crates/vfs-notify, crates/paths", "These crates implement a virtual file system. They provide consistent snapshots of the underlying file system and insulate messy OS paths.")
+    Component(vsf, "VFS", "crates/vfs, crates/vfs-notify, crates/paths", "These crates implement a virtual file system. They provide consistent snapshots of the underlying file system and insulate messy OS paths.")
     Component(stdx, "stdx", "crates/stdx", "This crate contains various non-rust-analyzer specific utils, which could have been in std, as well as copies of unstable std items we would like to make use of already.")
     Component(profile, "Profiling", "crates/profile", "This crate contains utilities for CPU and memory profiling.")
     Component(intern, "Inter", "crates/intern", "This crate contains infrastructure for globally interning things via Arc.")
@@ -38,7 +38,7 @@ Rel(rustanalyzer, project, "")
 Rel(rustanalyzer, profile, "")
 
 Rel(basedb, intern, "")
-Rel(basedb, paths, "")
+Rel(basedb, vsf, "")
 Rel(basedb, span, "")
 Rel(basedb, stdx, "")
 
