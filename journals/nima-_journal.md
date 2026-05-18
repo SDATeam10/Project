@@ -42,8 +42,9 @@ I wrote down why they were used and what alternatives existed, then pushed the u
 
 ### Activities & Effort
 * [x] **Main Purpose & Stakeholder Layout:** Authored a clear overview of the library-compiler paradigm and classified end-user vs contributor concerns.
-* [x] **Methodology Mapping:** Explicitly integrated the project's analytical toolchain (`scc`, `cargo-modules` v1.94.0, `analyze-dependencies.js`, PlantUML/Mermaid pipeline) and detailed the concrete "Go to Definition" code inspection methodology.
+* [x] **Methodology Mapping:** Explicitly integrated the project's analytical toolchain (`scc`, `cargo-modules` v1.94.0, `analyze-dependencies.js`, PlantUML pipeline) and detailed the concrete "Go to Definition" code inspection methodology.
 * [x] **System Summaries:** Synthesized the architectural Salsa invariants and mapped the design patterns (Adapter, Facade, Builder, Strategy) strictly within the execution path of the 5 core crates.
+* [x] **Facade Modeling:** Created `facade.puml` within the native architecture diagrams directory and linked the rendered PNG asset.
 
 ### Report
 I completed the first integrated draft of the project's Overview document following the layout requested by Matteo and the technical requirements discussed with Abdullah. The text was structured to clearly separate our tool-driven design methodology from our architectural summaries while actively preserving the baseline metrics and statistics previously implemented by Saeid.
