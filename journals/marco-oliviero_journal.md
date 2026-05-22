@@ -148,7 +148,7 @@ Today's work was dedicated on reading, reviewing and adjusting the two main repo
 
 ### Date: 2026-05-16
 
-### Period: 1 hours
+### Period: 1 hour
 
 ### Objectives
 * **Architecture report**: add more details in the `Architecture.md` report
@@ -160,3 +160,24 @@ Today's work was dedicated on reading, reviewing and adjusting the two main repo
 ### Report
 
 Today's work was dedicated on researching more about Rust Analyzer architecture, giving more interest in the boundaries and wrote a paragraph about them.
+
+***
+
+### Date: 2026-05-22
+
+### Period: 1 hour
+
+### Cooperators
+* Matteo Del Monaco
+
+### Objectives
+* **C4 diagrams**: adjust some of the c4 diagrams
+* **Architecture report**: add some details in the report
+
+### Activities & Effort
+* [x] helped adjusting some of the c4 diagrams
+* [x] added little details in the report about diagrams' structure 
+
+### Report
+
+Today's work was dedicated on adjusting some of the c4 diagrams and adding some notes in the report
