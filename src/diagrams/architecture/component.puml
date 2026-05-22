@@ -16,7 +16,7 @@ System_Boundary(sn, "Rust Analyzer System"){
     Component(ide_int, "Ide", "Rust Component", "Provides 'ide-centric' APIs for the rust-analyzer.")
     Component(rustanalyzer, "Rust Analyzer", "Rust Component", "Implementation of the LSP for rust-analyzer.")
     Component(project, "Project", "Rust Component", "Provide functionalities related to the project's structure and get compiler errors for the “check on save” feature.")
-    Component(macro, "Proc Macro", "Rust Component", "These crates implement macros as token tree -> token tree transforms. They are independent from the rest of the code.")
+    Component(macro, "Proc Macro API", "Rust Component", "These crates implement macros as token tree -> token tree transforms. They are independent from the rest of the code.")
     Component(cfg, "Cfg", "Rust Component", "This crate is responsible for parsing, evaluation and general definition of cfg attributes.")
     Component(vfs, "VFS", "Rust Component", "These crates implement a virtual file system. They provide consistent snapshots of the underlying file system and insulate messy OS paths.")
     Component(stdx, "stdx", "Rust Component", "This crate contains various non-rust-analyzer specific utils, which could have been in std, as well as copies of unstable std items we would like to make use of already.")
