@@ -101,6 +101,18 @@ At the component level, rust-analyzer can be understood as a loosely layered arc
         <figcaption><em>Figure 3.1: Component diagram</em></figcaption>
 </figure>
 
+As Rust-analyzer's project implements a great number of crates, we decided to group crates that lie behind a common API boundary. 
+For example, the `ide` crate defines an API boundary, part of which is implemented by the subcrates `ide-db`, `ide-assists`, `ide-completion`, `ide-diagnostics` and `ide-ssr`.
+Similarly the API boundary defined by the `hir` crate is partially implemented by the subcrates `hir-expand`, `hir-def` and `hir_ty`.
+<!--
+    division of crates proc-macro-api, proc-macro-srv, proc-macro-srv-cli
+    division of vfs and vfs-notify
+-->
+
+
+
+one last example could be which has subcrates `proc-macro-api`, `proc-macro-srv` and `proc-macro-srv-cli`.
+
 However, as rust-analyzer is quite complex, we will focus our analysis on the conceptual layers we identified, while glossing over some of the more implementation-specific details or project related crate management. Below there's a diagram that highlights the core components of our analysis, while omitting some implementation complexity.
 
 ```mermaid
