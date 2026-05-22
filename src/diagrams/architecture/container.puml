@@ -15,7 +15,7 @@ System_Boundary(sb, "Rust Analyzer System", "SoftwareSystem"){
     Container(xtask, "xtask", "xtask", "Custom builder for rust-analyzer")
 }
 Rel(client, ide_ext, "Provides source Rust files, uses language tooling features")
-Rel(ide_ext, rustanalyzer, "Requests information about the code", "LSP / JSON")
+Rel(ide_ext, rustanalyzer, "Request LSP functionality", "LSP / JSON")
 Rel(rustanalyzer, file_system, "Reads/writes files", "OS API")
 Rel(xtask, rustanalyzer, "builds")
 
