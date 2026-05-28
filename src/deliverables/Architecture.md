@@ -1,40 +1,12 @@
 # Architecture
-<!--
-- Primary goal: document and describe the architecture of the system
-- Use C4 notation, provide levels 1-2-3:
-    - Declare the tool(s) used for C4 diagram
-    - Context diagram
-    - Container diagram
-    - Components diagrams (motivate decisions if you may need to discard specific containers)
-- Tooling
-    - https://c4model.com/tooling
-    - indicate what you used in the report
-- Max 2500 words, excluding diagrams
--->
-
 ## Introduction
 The rust-analyzer project is structured using a **compiler-as-a-library** architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to highlight that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
-
-<!--
-Note from Marco Oliviero:
-I'm not sure about this part, because as we discovered recently, the majority of the crates are not intended for external use.
-Cfr:
-    Published Library Crates: Three crates in lib/ are published to crates.io as independent libraries
-
-    Internal Crates: All crates in crates/ have version 0.0.0 and are not intended for external use. They form rust-analyzer's internal architecture and can evolve freely without backward compatibility constraints
-
-    link: https://deepwiki.com/rust-lang/rust-analyzer/2.1-crate-structure-and-dependencies
--->
 
 In this analysis we focused our attention on what is probably the most common use case for rust-analyzer: a user interacting with rust-analyzer through an IDE to obtain language tooling features (such as code completion, type checking, error checking, goto-definitions, … ).
 
 To support this highly interactive environment, rust-analyzer relies on a loosely layered architecture where each internal layer exposes a clear API boundary and builds on top of lower-level abstractions. This decoupling allows the system to utilize internal components in isolation. By combining these modular pieces, the architecture successfully achieves the fast, incremental computation required for responsive IDE features.
 
 ## Context level
-<!--
-- Context level: diagram and explanations
--->
-
 As mentioned in the introduction, rust-analyzer's core workflow consists of a user asking its IDE for some language tooling feature. The IDE then forwards this request to rust-analyzer using the LSP protocol.
 
 
@@ -56,13 +28,6 @@ As mentioned in the introduction, rust-analyzer's core workflow consists of a us
 ***
 
 ## Container Level
-<!--
-- Container level: diagram and explanations
-    * Did you find any relationship with the Clean Architecture blueprint?
-
-Salsa apparently shouldn't be considered a container, as it's not a database running as a separate process, but rather a logical component that implements incremental persistance.
--->
-
 At the container level rust-analyzer's layered architecture is not yet visible, though some of the most important entities start to emerge.
 
 The external IDE interacts directly with the language server exposed by rust-analyzer's single deployed container.
@@ -87,10 +52,6 @@ However, rust-analyzer's designers were clearly aware of "clean code" and "clean
 ***
 
 ## Component Level
-<!--
-- Component level: diagrams and explanations
-    * Did you observe any violation of SOLID principles at level 3 ?
--->
 At the component level, rust-analyzer can be understood as a loosely layered architecture organized around four conceptual layers: LSP integration, IDE services, semantic analysis, and syntactic analysis. These layers are supported by a shared infrastructure layer that provides incremental computation, file abstraction, and external process isolation. Rust-analyzer also provides services that handle cargo project management, profiling tools, conditional build support and interning functions. Figure 3.1 shows the full component diagram of rust-analyzer.
 
 <figure align="center">
@@ -104,12 +65,6 @@ At the component level, rust-analyzer can be understood as a loosely layered arc
 As Rust-analyzer's project implements a great number of crates, we decided to group crates that lie behind a common API boundary. 
 For example, the `ide` crate defines an API boundary, part of which is implemented by the subcrates `ide-db`, `ide-assists`, `ide-completion`, `ide-diagnostics` and `ide-ssr`.
 Similarly the API boundary defined by the `hir` crate is partially implemented by the subcrates `hir-expand`, `hir-def` and `hir_ty`.
-<!--
-    division of crates proc-macro-api, proc-macro-srv, proc-macro-srv-cli
-    division of vfs and vfs-notify
--->
-
-
 
 one last example could be which has subcrates `proc-macro-api`, `proc-macro-srv` and `proc-macro-srv-cli`.
 
@@ -205,11 +160,6 @@ Due to the design, top level API boundary components inevitably end up providing
 ***
 
 ## Architectural characteristics
-<!--
-- Architectural characteristics: comment on important architectural characteristics/qualities of the system and how they are supported by the architecture
-    * You might also use components coupling and cohesion metrics to support your reasoning
--->
-
 ### Robustness and Fault Tolerance
 
 Rust-analyzer works in an environment that is significantly different from that of a traditional compiler and has to face different challenges. For instance, in an IDE scenario the source code is often at least partially invalid and highly dynamic. Rust-analyzer needs to be able to provide language tooling features even when it processes incomplete or malformed inputs as well as internal failures. It also needs to abort ongoing analysis, to avoid providing results computed over stale data.  
@@ -314,15 +264,6 @@ flowchart LR
 ```
 
 <center><em>Rust-analyser's simplfied interaction with the file system.</em></center>
-
-<!--
-> **Architecture Invariant**
-> VFS doesn't perform any IO directly and doesn't load or read files, its job is only to record state. The VFS is updated through events such as `set_file_contents`, which in turn updates the `changes` array.
->
-> It's instead `loader.rs` job to perform the actual read of the file. It is both able to read files and detect when they have been changed (and emit the associated events). The 'watching' functionality is a non-trivial issue to solve, as most raw OS APIs don't offer a reliable mechanism to detect changes. The crate `vfs_notify` is an implementation of `loader::Handle` and implements the file watching function.
->
-> The file watching bits here are untested and quite probably buggy. For this reason, by default rust-analyzer doesn't watch files and relies on editor’s file watching capabilities instead.
--->
 
 ### Performance and Responsiveness
 
