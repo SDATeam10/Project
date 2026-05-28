@@ -166,49 +166,8 @@ Rust-analyzer works in an environment that is significantly different from that 
 
 In order to achieve this, rust-analyzer employs the following architectural strategies:
 - **Non-destructive parsing**: the `syntax` crate, rather than returning `Result<T, Error>`, provides `(Tree, Vec<Error>)`. This way parsing never fails even in the presence of errors. The AST is always generated, even with error nodes, and the semantic layer can still provide useful features like *code completion*.
-
-```mermaid
-flowchart LR
-
-    Source["Incomplete Source Code"]
-    Parser[Parser]
-    Tree["Syntax Tree"]
-    Errors["Vec&ltError&gt"]
-    IDE[IDE Features]
-
-    Source --> Parser
-
-    Parser --> Tree
-    Parser --> Errors
-
-    Tree --> IDE
-```
-
 - **Graceful cancellation**: whenever a user types a new character, any background process currently analysing stale code needs to be stopped. The `salsa` database enables this functionality by keeping track of a revision counter, which is increased whenever the underlying data is modified. This change in revision counter causes background threads to panic, while the outer LSP boundary handles these events using `catch_unwind`. Panics are then transformed into graceful cancellation responses for the IDE, preventing the system from crashing while still freeing up CPU resources immediately.
 - **Isolated macro expansion**: Rust enables its users to write procedural macros, which execute custom, third-party code during compilation. Unfortunately poorly written macros can cause infinite-loops or panic. In order to keep the language server responsive, rust-analyzer delegates macro expansion to an entirely separate OS process (`proc-macro-srv`). This creates a strict fault-isolation boundary: if a macro crashes, only the child process dies, while the main rust-analyser remains receptive to new inputs.
-
-```mermaid
-flowchart LR
-
-    subgraph MainProcess["rust-analyzer process"]
-        IDE[IDE Features]
-        HIR[Semantic Analysis]
-        MacroClient[proc-macro client]
-    end
-
-    subgraph ChildProcess["proc-macro-srv process"]
-        MacroCode[Procedural Macro]
-    end
-
-    MacroClient -->|Expand macro| MacroCode
-    MacroCode -->|Expansion result| MacroClient
-
-    Crash["Macro panic / infinite loop"]
-
-    Crash -. isolated failure .-> ChildProcess
-```
-
-<center><em>Rust-analyser's simplfied separate macro expansion system.</em></center>
 
 
 ### Portability and Determinism
@@ -271,24 +230,6 @@ To provide real-time IDE features (such as auto-completion and type checking) wi
 
 In order to employ at their best `salsa`'s features, the architecture shows these important characteristics:
 - **Query-based architecture**: Instead of a traditional compiler pipeline (Lexing $\rightarrow$ Parsing $\rightarrow$ Type Checking), rust-analyzer reasons about code by modelling its database as a series of facts. The raw source files are the "inputs" and everything else (ASTs, resolved types, diagnostics) is a "derived query". `salsa` automatically tracks the dependencies between these queries.
-
-```mermaid
-flowchart LR
-
-    Source["Incomplete Source Code"]
-    Parser[Parser]
-    Tree["Syntax Tree"]
-    Errors["Vec<Error>"]
-    IDE[IDE Features]
-
-    Source --> Parser
-
-    Parser --> Tree
-    Parser --> Errors
-
-    Tree --> IDE
-```
-
 - **Granular cache invalidation**: When the user types a character, rust-analyzer packages the modification into a `Change` struct and applies it to the database. Thanks to `salsa`'s exact query dependency tracking, only specific data affected by that edit is invalidated and recomputed (e.g., the local variables within the currently edited function). The rest of the project's semantic model remains cached and is instantly available.
 
 ```mermaid
@@ -316,8 +257,6 @@ sequenceDiagram
 
 - **Durability levels**: By default, changing any input in a global database might invalidate the entire cache. To prevent this, rust-analyzer implements a strict classification of data volatility using "Durability" levels. User code being actively edited is marked as `Durability::LOW`, while external dependencies and the Rust standard library are marked as `Durability::HIGH`. Modifying low-durability data does not trigger a revalidation of high-durability data, saving massive amounts of CPU cycles and allowing the server to respond instantly.
 - **Separation of compiler and IDE state**: To further optimize performance and prevent the compiler layers from doing unnecessary work, the database is split into two distinct traits: `SourceDatabase` (for core compiler logic) and `SourceDatabaseExt` (for IDE-specific needs). This strict boundary ensures that the core semantic analyser is never forced to recompute its state just because an IDE-only visual feature changed.
-
-
 
 ***
 
