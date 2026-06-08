@@ -181,7 +181,7 @@ For **Go to Definition**:
 
 5. rust-analyzer can now call:
 
-   ```text
+   ```rust
    snap.analysis.goto_definition(...)
    ```
 
@@ -550,17 +550,15 @@ For **Go to Definition**:
   snap.analysis.goto_definition(position, &config)
   ```
 
-5. That enters the `ide` crate:
+5. That enters the `ide`(`crates/ide/src/lib.rs`) crate:
 
-  ```text
-  crates/ide/src/lib.rs
+  ```rust
   Analysis::goto_definition
   ```
 
-6. `Analysis::goto_definition` calls the real go-to-definition feature code:
+6. `Analysis::goto_definition` calls the real go-to-definition feature code (`crates/ide/src/goto_definition.rs`):
 
-  ```text
-  crates/ide/src/goto_definition.rs
+  ```rust
   goto_definition(...)
   ```
 
