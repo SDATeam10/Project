@@ -4,8 +4,8 @@ left to right direction
 
 LAYOUT_WITH_LEGEND()
 
-Person(client, "Client", "Provider of source rust files, like a user working with an IDE.")
-System_Ext(ide, "Integrated Development Environment", "Software designed to write and modify source code effectively", "Software System")
+Person(client, "Client", "Provider of source Rust files, like a user working with an IDE.")
+System_Ext(ide, "Integrated Development Environment", "Software designed to write and modify source code effectively.", "Software System")
 System_Ext(file_system, "Host File System", "File System of the host machine. It allows to store and retrieve files.", "Software System")
 System(system, "Rust Analizer", "Provides the users with common quality of life features such as: annotations, auto-imports, code completion, hover information and many others.", "Software System")
 

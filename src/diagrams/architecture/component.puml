@@ -7,7 +7,7 @@ skinparam ranksep 200
 LAYOUT_WITH_LEGEND()
 
 
-System_Ext(ide_ext, "Integrated Development Environment", "Software designed to write and modify source code effectively", "Software System")
+System_Ext(ide_ext, "Integrated Development Environment", "Software designed to write and modify source code effectively.", "Software System")
 System_Ext(file_system, "Host File System", "File System of the host machine. It allows to store and retrieve files.", "Software System")
 
 System_Boundary(sn, "Rust Analyzer System"){
@@ -57,9 +57,9 @@ Rel(basedb, intern, "Retrieves/sends data to intern", "Methods call")
 Rel(basedb, vfs, "Requests file's contents", "Methods call")
     Rel(vfs, paths, "Uses types defined in", "Methods call")
     Rel(vfs, file_system, "Reads/writes files", "OS API")
-Rel(basedb, span, "requests code locations", "Methods call")
-Rel(basedb, stdx, "takes utilities function", "Methods call")
-Rel(rustanalyzer, profile, "gets CPU and memory profiling", "Methods call")
+Rel(basedb, span, "Requests code locations", "Methods call")
+Rel(basedb, stdx, "Takes utilities function", "Methods call")
+Rel(rustanalyzer, profile, "Gets CPU and memory profiling", "Methods call")
 
 @enduml
 
