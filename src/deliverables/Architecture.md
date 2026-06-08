@@ -1,6 +1,6 @@
 # Architecture
 ## Introduction
-The rust-analyzer project is structured using a **compiler-as-a-library** architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to highlight that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
+The rust-analyzer project is structured using a *compiler-as-a-library* architectural pattern. It operates as a collection of modular libraries working together to provide structured syntactic and semantic analysis of Rust source code. However, it is important to highlight that the crates within the `crates/` directory form an internal architecture; they are not published as independent tools and are not intended for external use.
 
 In this analysis we focused our attention on what is probably the most common use case for rust-analyzer: a user interacting with rust-analyzer through an IDE to obtain language tooling features (such as code completion, type checking, error checking, goto-definitions, … ).
 
@@ -62,13 +62,12 @@ At the component level, rust-analyzer can be understood as a loosely layered arc
         <figcaption><em>Figure 3.1: Component diagram</em></figcaption>
 </figure>
 
-As Rust-analyzer's project implements a great number of crates, we decided to group crates that lie behind a common API boundary. 
-For example, the `ide` crate defines an API boundary, part of which is implemented by the subcrates `ide-db`, `ide-assists`, `ide-completion`, `ide-diagnostics` and `ide-ssr`.
-Similarly the API boundary defined by the `hir` crate is partially implemented by the subcrates `hir-expand`, `hir-def` and `hir_ty`.
+As rust-analyzer's project implements a great number of crates, we decided to group crates that lie behind a common API boundary, modelling only the top level component.  What follows is a brief listing of all the crates we decided to group in this way:
+- `ide`, extended by the subcrates `ide-db`, `ide-assists`, `ide-completion`, `ide-diagnostics` and `ide-ssr`.
+- `hir`, extended by the subcrates`hir-expand`, `hir-def` and `hir_ty`.
+- `proc-macro-api` extended by the crates `proc-macro-srv` and `proc-macro-srv-cli`.
 
-one last example could be which has subcrates `proc-macro-api`, `proc-macro-srv` and `proc-macro-srv-cli`.
-
-However, as rust-analyzer is quite complex, we will focus our analysis on the conceptual layers we identified, while glossing over some of the more implementation-specific details or project related crate management. Below there's a diagram that highlights the core components of our analysis, while omitting some implementation complexity.
+Given rust-analyzer's complexity, we will focus our analysis on the conceptual layers we identified, while glossing over some of the more implementation-specific details or project related crate management. Below there's a diagram that highlights the core components of our analysis, while omitting some implementation complexity.
 
 ```mermaid
 flowchart TD
@@ -151,11 +150,11 @@ DIP is followed at the boundary layer, with all components referencing the top l
 This is evident in components such as `vfs` and the Salsa-based database layer, where higher-level IDE logic operates over `FileId` and virtual file abstractions. Actual file system I/O operations are delegated to `loader.rs` which defines abstraction traits for file loading and watching. The concrete implementations are provided by `vfs_notify` instead. This enables higher-level logic to remain independent of platform-specific I/O concerns.
 Additionally, incremental computation is expressed through abstract query traits rather than concrete data manipulation.
 
-LSP is less directly applicable in rust, since Rust doesn't have classic subtype hierarchies, unlike OOP languages. In practice, rust-analyzer’s small, focused traits and explicit module boundaries make substitutability issues relatively uncommon. And we couldn't find any concrete example of a violation of this principle.
+LSP is less directly applicable in Rust since the language doesn't provide classic subtype hierarchies, unlike OOP languages. In practice, rust-analyzer’s small, focused traits and explicit module boundaries make substitutability issues relatively uncommon. And we couldn't find any concrete example of a violation of this principle.
 
 Finally, the ISP principle can be found in different aspects, like the decision to split the database in two separate interfaces (`SourceDatabase` and `SourceDatabaseExt`) to hide information where not relevant. Many of the components mentioned in the SRP section elicit an ISP friendly behaviour, as the interface they provide is relatively narrow.
-Additionally, given rust's traits, the language itself encourages writing small interfaces that can be combined to achieve more complex behaviour. 
-Due to the design, top level API boundary components inevitably end up providing quite fat API, though it's difficult to consider this fact an error on rust-analyzer's team part, given the advantages a clear API boundary provides.
+Additionally, given Rust's traits, the language itself encourages writing small interfaces that can be combined to achieve more complex behaviour. 
+Due to the design, top level API boundary components inevitably end up providing quite fat APIs, though it's difficult to consider this fact an error on rust-analyzer's team part, given the advantages a clear API boundary provides.
 
 ***
 
