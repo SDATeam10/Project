@@ -256,3 +256,48 @@ Several diagrams and sections were reorganized to create a more coherent narrati
 
 ***
 
+## Date: 2026-05-22
+
+### Period: 3 hours
+
+### Objectives
+* **Component Diagram Refinement:** Improve the Rust Analyzer component diagram to better reflect actual subsystem boundaries and crate responsibilities.
+* **Architectural Consistency:** Align component relationships and terminology with the Rust Analyzer internal architecture and documentation.
+* **C4 Modeling Adjustments:** Refine crate grouping and dependency representation according to the intended C4 abstraction level.
+
+### Activities & Effort
+* [x] Refined PlantUML C4 notation and component relationships.
+* [x] Added and reorganized architectural components in the component diagram.
+* [x] Improved terminology consistency across crate descriptions.
+* [x] Added specifications regarding crate grouping and abstraction boundaries.
+* [x] Revised macro-related subsystem representation (`macros`, `mbe`, `proc_macro_api`).
+* [x] Refined filesystem and project-loading relationships (`vfs`, `vfs_notify`, `load_cargo`).
+* [x] Reviewed semantic layering between `ide`, `hir`, `syntax`, and `parser`.
+
+### Report
+
+The Rust Analyzer component diagram underwent a substantial architectural refinement phase.
+
+The main focus was improving consistency between the modeled components and the actual internal architecture of Rust Analyzer as described by both the official documentation and the “Explaining Rust Analyzer” lecture series.
+
+Several subsystem descriptions were revised to better reflect their architectural responsibilities. Particular attention was dedicated to the semantic layering of the system:
+- `rust_analyzer` as orchestration and LSP layer
+- `ide` as IDE-oriented API façade
+- `hir` as the high-level semantic access layer
+- `syntax` and `parser` as the syntax-processing infrastructure
+
+The diagram was also updated to better represent macro expansion infrastructure, including:
+- declarative macros (`mbe`)
+- procedural macro execution (`proc_macro_api`)
+- macro expansion orchestration (`macros`)
+
+Additional work focused on improving the representation of filesystem-related components:
+- `vfs`
+- `vfs_notify`
+- `load_cargo`
+- `paths`
+
+Crate grouping decisions were documented explicitly to clarify where multiple lower-level crates had been intentionally condensed into higher-level architectural components for C4 readability.
+
+Finally, several notation and terminology fixes were applied to improve consistency and maintain alignment with Rust Analyzer’s internal documentation and architectural conventions.
+
