@@ -13,7 +13,7 @@ Our reverse-engineering and evaluation of `rust-analyzer` relied on a multi-tier
 * **Repository & Codebase Metrics:** We leveraged the static analysis tool `scc` to systematically measure physical files, comment densities, and absolute lines of source code across the entire workspace directory.
 * **Workspace Dependency Tracks:** To map exact structural coupling, we utilized `cargo-modules` (pinned to version 1.94.0) to output native, abstract syntax tree (AST)-aware graphs. The resulting metrics were processed through a custom Node.js script (`tools/analyze-dependencies.js`) to parse structural dependencies and calculate the precise Fan-In and Fan-Out values across the system.
 * **Architectural Modeling:** Visual boundaries and subsystem distributions were mapped utilizing the formal **C4 Model** conventions. Diagrams were scripted and compiled locally into target image assets via PlantUML configurations and standalone Mermaid scripts using our automated compilation pipeline (`tools/puml2img/compile-architecture.sh`).
-* **Design Pattern Justification:** Rather than extracting design patterns out of context, we traced an active end-to-end IDE feature execution path—specifically focusing on a **"Go to Definition"** request. We monitored how this control flow propagated across the system boundaries and systematically mapped the interacting code structures against the structural and behavioral pattern criteria outlined in our course framework, checking individual roles, problem contexts, and design alternatives.
+* **Design Pattern Justification:** Rather than extracting design patterns out of context, we traced an active end-to-end IDE feature execution path—specifically focusing on a *"Go to Definition"* request. We monitored how this control flow propagated across the system boundaries and systematically mapped the interacting code structures against the structural and behavioral pattern criteria outlined in our course framework, checking individual roles, problem contexts, and design alternatives.
 
 
 ### Basic Code Statistics
@@ -117,8 +117,8 @@ The infrastructure maintains three primary architectural invariants:
 * **Portability & System Decoupling:** Filesystem lookups and physical paths are wrapped inside an abstract Virtual File System (`vfs`), mapping system files to immutable, versioned internal tokens (`FileId`) to ensure environment-agnostic execution.
 * **Volatilities Control:** Cache invalidation loops are constrained using High vs. Low durability tiers within the database layer, ensuring active typing edits within a local scratchpad do not force a rebuild of stable high-durability targets like external library dependencies.
 
-## 5. Design Summary (Core Modules Focus)
-The design analysis focused strictly on evaluating the structural and behavioral patterns implemented across the primary **5 core modules (crates)** that orchestrate the system's execution pipeline:
+## 5. Design Summary 
+The design analysis focused strictly on evaluating the structural and behavioral patterns implemented across the primary 5 core modules (crates) that orchestrate the system's execution pipeline:
 
 $$\text{rust-analyzer} \longrightarrow \text{ide} \longrightarrow \text{hir} \longrightarrow \text{syntax} \longrightarrow \text{parser}$$
 
